@@ -1,6 +1,6 @@
 var sql = require(sql);
 // Called on page load to populate subject list
-function onLoad(connection, postData, response)
+function onLoad(connection, getData, response)
 {
 	connection.query('SELECT subject FROM classDB', function(error, rows, feilds){
 		if(error)
@@ -13,9 +13,9 @@ function onLoad(connection, postData, response)
 	});
 }
 //Called when the user first selects a subject
-function subjectExpand(connection, postData, response)
+function subjectExpand(connection, getData, response)
 {
-	connection.query('SELECT classID FROM classDB WHERE subject == ?', [postData["subject"]], function(error, rows, feilds){
+	connection.query('SELECT classID FROM classDB WHERE subject == ?', [getData["subject"]], function(error, rows, feilds){
 		if(error)
 		{
 			throw error;
@@ -26,9 +26,9 @@ function subjectExpand(connection, postData, response)
 	});
 }
 //Called when a user first selects a class
-function classExpand(connection, postData, response)
+function classExpand(connection, getData, response)
 {
-	connection.query('SELECT section FROM classDB WHERE subject == ? AND classID == ?', [postData["subject"], postData["classID"]], function(error, rows, feilds){
+	connection.query('SELECT section FROM classDB WHERE subject == ? AND classID == ?', [getData["subject"], getData["classID"]], function(error, rows, feilds){
 		if(error)
 		{
 			throw error;
@@ -39,10 +39,10 @@ function classExpand(connection, postData, response)
 	});
 }
 //Called when a user first selects a section
-function sectionExpand(connection, postData, response)
+function sectionExpand(connection, getData, response)
 {
 	connection.query('SELECT slotsOpen, slotsTotal, teacher, time, room FROM classDB WHERE subject == ? AND classID == ? AND section == ?',
-	 [postData["subject"], postData["classID"], postData["section"]],
+	 [getData["subject"], getData["classID"], getData["section"]],
 	 function(error, rows, feilds){
 	 	if(error)
 	 	{
@@ -53,6 +53,7 @@ function sectionExpand(connection, postData, response)
 	 	response.end();
 	 });
 }
+exports.onLoad = onLoad;
 exports.subjectExpand = subjectExpand;
 exports.classExpand = classExpand;
 exports.sectionExpand = sectionExpand;

@@ -1,28 +1,28 @@
 var http = require('http');
 var url = require('url');
-var sql = require('mysql');
+var mysql = require('mysql');
 //Called when server first starts
 // Opens connection to database and creates the listeners
 function start(handle, route)
 {
 	var conection = mysql.createConnection({
-	host : 'localhost',
-	user : 'example',
-	password: 'example'
+	host : '198.6.12.112',
+	user : 'root',
+	password: 'He18272742!'
 	});
 	//Called when a request hits the server.
-	//Takes postData from the request then makes a call to the router to deal with callbacks
+	//Takes getData from the request then makes a call to the router to deal with callbacks
 	function onRequest(request, response)
 	{
-		var postData = "";
+		var getData = "";
 		connection.connect();
 		var pathname = url.parse(request.url).pathname;
-		request.addListener("data", function(postDataChunk){
-			postData+=postDataChunk;
+		request.addListener("data", function(getDataChunk){
+			getData+=getDataChunk;
 		});
 		request.addListener("end", function()
 		{
-			route(handle ,connection,  pathname, postData, response);
+			route(handle ,connection,  pathname, getData, response);
 		});
 
 	}

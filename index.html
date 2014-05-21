@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<script>
-			function loadXMLDoc(url, callBack)
+			/*function loadXMLDoc(url, callBack)
 			{
 				var xmlHttp = new XMLHttpRequest();
 				xmlHttp.onreadystatechange=callBack;
@@ -18,10 +18,10 @@
 					}
 				});
 			}
-			function subjectExpand()
+			function subjectExpand(subject)
 			{
-				var url = document.getElementById("subjectForm").
-				loadXMLDoc("index.js/subjectExpand", function(){
+				var url = "index.js/subjectExpand?subject=" + subject;
+				loadXMLDoc(url, function(){
 					if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
 					{
 						document.getElementById("sectionList").innerHTML = "";
@@ -30,9 +30,10 @@
 					}
 				});
 			}
-			function classExpand()
+			function classExpand(subject, classID)
 			{
-				loadXMLDoc("index.js/classExpand", function(){
+				var url = "index.js/classExpand?subject=" + subject + "&classID=" + classID;
+				loadXMLDoc(url, function(){
 					if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
 					{
 						document.getElementById("details").innerHTML = "";
@@ -40,9 +41,10 @@
 					}
 				});
 			}
-			function sectionExpand()
+			function sectionExpand(subject, classID, section)
 			{
-				loadXMLDoc("index.js/sectionExpand", function(){
+				var url = "index.js/subjectExpand?subject=" + subject + "&classID" + classID + "&section=" + section;
+				loadXMLDoc(url, function(){
 					if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
 					{
 						document.getElementById("details").innerHTML = xmlHttp.responseText;
@@ -50,12 +52,13 @@
 				});
 			}
 			window.onload = onLoad();
+			*/
 		</script>
   	</head>
 	<body>
-		<div id = "subjectList"></div>
-		<div id = "classList"></div>
-		<div id = "sectionList"></div>
-		<div id = "detailsList"></div>
+		<div id = "subjectList">testing this subject</div>
+		<div id = "classList">testing this class</div>
+		<div id = "sectionList">testing this section</div>
+		<div id = "detailsList">testing these details</div>
 	</body>
 </html>

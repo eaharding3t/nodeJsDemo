@@ -1,4 +1,4 @@
-var sql = require(sql);
+var sql = require("mysql");
 // Called on page load to populate subject list
 function onLoad(connection, getData, response)
 {

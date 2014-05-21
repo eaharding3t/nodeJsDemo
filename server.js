@@ -5,7 +5,7 @@ var mysql = require('mysql');
 // Opens connection to database and creates the listeners
 function start(handle, route)
 {
-	var conection = mysql.createConnection({
+	var connection = mysql.createConnection({
 	host : '198.6.12.112',
 	user : 'root',
 	password: 'He18272742!'
@@ -15,7 +15,7 @@ function start(handle, route)
 	function onRequest(request, response)
 	{
 		var getData = "";
-		connection.connect();
+		//connection.connect();
 		var pathname = url.parse(request.url).pathname;
 		request.addListener("data", function(getDataChunk){
 			getData+=getDataChunk;

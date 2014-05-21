@@ -7,8 +7,19 @@ function onLoad(connection, getData, response)
 		{
 			throw error;
 		}
-		response.writeHead(200, {"Content-Type" : "text/plain"});
-		response.write(rows);
+		var test = '<form action="">'+ 
+  		'<select name="customers" onchange="classExpand(this.value)">'+
+  '<option value="">Select a subject/option>'+
+  '<option value="MATH">Math</option>'+
+  '<option value="CS">Computer Science</option>'+
+  '<option value="ENGL">English</option>'+
+  '<option value="EE">Electrical Engineering</option>'+
+  '<option value="CE">Computer Engineering</option>'+
+  '</select>'+
+  '</form>'+
+  '<br>';
+		response.writeHead(200, {"Content-Type" : "text/html"});
+		response.write(test);
 		response.end();
 	});
 }

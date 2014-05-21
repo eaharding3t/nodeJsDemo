@@ -9,10 +9,11 @@ function route(handle, connection, pathname, getData, response)
 	{
 		handle['onLoad'](connection, getData, response);
 	}
+	else
 	{
 		response.writeHead(200, {"Content-Type" : "text/plain"});
 		response.write("404 not found");
 		response.end();
 	}
 }
-exports.router = route;
+exports.route = route;

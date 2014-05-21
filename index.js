@@ -6,4 +6,5 @@ handle['onLoad'] = handlers.onLoad;
 handle['subjectExpand'] = handlers.subjectExpand;
 handle['classExpand'] = handlers.classExpand;
 handle['sectionExpand'] = handlers.sectionExpand;
+console.log("work");
 server.start(handle, router.route);

@@ -6,9 +6,10 @@ var mysql = require('mysql');
 function start(handle, route)
 {
 	var connection = mysql.createConnection({
-	host : '198.6.12.112',
+	host : '127.0.0.1',
+	database: 'test',
 	user : 'root',
-	password: 'He18272742!'
+	password: 'He18272752!'
 	});
 	//Called when a request hits the server.
 	//Takes getData from the request then makes a call to the router to deal with callbacks

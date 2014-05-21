@@ -1,12 +1,14 @@
 var sql = require("mysql");
 // Called on page load to populate subject list
-function onLoad(connection, getData, response)
+function onLoading(connection, getData, response)
 {
+	connection.connect();
 	connection.query('SELECT subject FROM classDB', function(error, rows, feilds){
 		if(error)
 		{
 			throw error;
 		}
+		console.log(rows);
 		var test = '<form action="">'+ 
   		'<select name="customers" onchange="classExpand(this.value)">'+
   '<option value="">Select a subject/option>'+
@@ -64,7 +66,7 @@ function sectionExpand(connection, getData, response)
 	 	response.end();
 	 });
 }
-exports.onLoad = onLoad;
+exports.onLoading = onLoading;
 exports.subjectExpand = subjectExpand;
 exports.classExpand = classExpand;
 exports.sectionExpand = sectionExpand;

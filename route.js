@@ -5,9 +5,10 @@ function route(handle, connection, pathname, getData, response)
 	{
  		handle[pathname](connection, getData, response);
 	}
-	else if(handle[pathname] === '')
+	
+	else if(pathname == '/')
 	{
-		handle['onLoad'](connection, getData, response);
+		handle['onLoading'](connection, getData, response);
 	}
 	else
 	{

@@ -9,7 +9,7 @@ function onLoading(connection, getData, response)
 		}		
 
 		var list = '<form action="">'+ 
-  					'<select name="subjects" onchange="classExpand(this.value)">'+
+  					'<select name="subjects" onchange="subjectExpand(this.value)">'+
   					'<option value="">Select a subject</option>';
 		for (var i=0; i < rows.length; i++) {
 			list += '<option value="'+ rows[i]['subject'] +'">' + String(rows[i]['subject']) + "</option>";
@@ -36,7 +36,7 @@ function subjectExpand(connection, getData, response)
 
 		var list = '<form action="">'+ 
   					'<select name="subjects" onchange="classExpand(this.value)">'+
-  					'<option value="">Select a subject</option>';
+  					'<option value="">Select a classID</option>';
 		for (var i=0; i < rows.length; i++) {
 			list += '<option value="' + rows[i]['classID'] + '">' + String(rows[i]['classID']) + "</option>";
 		}
@@ -61,8 +61,8 @@ function classExpand(connection, getData, response)
 		}
 
 		var list = '<form action="">'+ 
-  					'<select name="subjects" onchange="classExpand(this.value)">'+
-  					'<option value="">Select a subject</option>';
+  					'<select name="subjects" onchange="sectionExpand(this.value)">'+
+  					'<option value="">Select a section</option>';
 		for (var i=0; i < rows.length; i++) {
 			list += '<option value="' + rows[i]['section'] + '">' + String(rows[i]["getData["subjects"], getData["classID"]"]) + "</option>";
 		}

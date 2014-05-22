@@ -2,26 +2,26 @@ var sql = require("mysql");
 // Called on page load to populate subject list
 function onLoading(connection, getData, response)
 {
-	connection.connect();
 	connection.query('SELECT subject FROM classDB', function(error, rows, feilds){
 		if(error)
 		{
 			throw error;
+		}		
+
+		var list = '<form action="">'+ 
+  					'<select name="subjects" onchange="classExpand(this.value)">'+
+  					'<option value="">Select a subject</option>';
+		for (var i=0; i < rows.length; i++) {
+			list += '<option value="'+ rows[i]['subject'] +'">' + String(rows[i]['subject']) + "</option>";
 		}
-		console.log(rows);
-		var test = '<form action="">'+ 
-  		'<select name="customers" onchange="classExpand(this.value)">'+
-  '<option value="">Select a subject/option>'+
-  '<option value="MATH">Math</option>'+
-  '<option value="CS">Computer Science</option>'+
-  '<option value="ENGL">English</option>'+
-  '<option value="EE">Electrical Engineering</option>'+
-  '<option value="CE">Computer Engineering</option>'+
-  '</select>'+
-  '</form>'+
-  '<br>';
-		response.writeHead(200, {"Content-Type" : "text/html"});
-		response.write(test);
+		list += '</select>'+
+				'</form>';
+
+  		var headers = {};
+    		headers["Content-Type"] = "text/html";
+   		headers["Access-Control-Allow-Origin"] = "*";
+   		response.writeHead(200, headers);
+		response.write(list);
 		response.end();
 	});
 }
@@ -33,8 +33,21 @@ function subjectExpand(connection, getData, response)
 		{
 			throw error;
 		}
-		response.writeHead(200, {"Content-Type" : "text/plain"});
-		response.write(feilds);
+
+		var list = '<form action="">'+ 
+  					'<select name="subjects" onchange="classExpand(this.value)">'+
+  					'<option value="">Select a subject</option>';
+		for (var i=0; i < rows.length; i++) {
+			list += '<option value="' + rows[i]['classID'] + '">' + String(rows[i]['classID']) + "</option>";
+		}
+		list += '</select>'+
+				'</form>';
+
+  		var headers = {};
+  		headers["Content-Type"] = "text/html";
+    		headers["Access-Control-Allow-Origin"] = "*";
+    		response.writeHead(200, headers);
+		response.write(list);
 		response.end();
 	});
 }
@@ -46,23 +59,57 @@ function classExpand(connection, getData, response)
 		{
 			throw error;
 		}
-		response.writeHead(200, {"Content-Type" : "text/plain"});
-		response.write(feilds);
+
+		var list = '<form action="">'+ 
+  					'<select name="subjects" onchange="classExpand(this.value)">'+
+  					'<option value="">Select a subject</option>';
+		for (var i=0; i < rows.length; i++) {
+			list += '<option value="' + rows[i]['section'] + '">' + String(rows[i]["getData["subjects"], getData["classID"]"]) + "</option>";
+		}
+		list += '</select>'+
+				'</form>';
+
+		var headers = {};
+  		headers["Content-Type"] = "text/html";
+    		headers["Access-Control-Allow-Origin"] = "*";
+    		response.writeHead(200, headers);
+		response.write(list);
 		response.end();
 	});
 }
 //Called when a user first selects a section
 function sectionExpand(connection, getData, response)
 {
-	connection.query('SELECT slotsOpen, slotsTotal, teacher, time, room FROM classDB WHERE subject == ? AND classID == ? AND section == ?',
-	 [getData["subject"], getData["classID"], getData["section"]],
-	 function(error, rows, feilds){
+	connection.query('SELECT slotsOpen, slotsTotal, teacher, time, room, waitlist FROM classDB WHERE subject == ? AND classID == ? AND section == ?',[getData["subject"], getData["classID"], getData["section"]],function(error, rows, feilds){
 	 	if(error)
 	 	{
 	 		throw error;
 	 	}
-	 	response.writeHead(200, {"Content-Type" : "text/plain"});
-	 	response.write(feilds);
+
+	 	var table = '<table border="1" style="width:500px">'+
+					'<tr>'+
+  						'<td>Slots open</td>'+
+  						'<td>Slots total</td>'+		
+  						'<td>Teacher</td>'+
+  						'<td>Time</td>'+
+  						'<td>Room</td>'+
+  						'<td>Waitlist</td>'+
+					'</tr>'+
+					'<tr>'+
+						'<td>' + String(rows[0]['slotsOpen']) + '</td>';
+						'<td>' + String(rows[0]['slotsTotal']) + '</td>';
+						'<td>' + String(rows[0]['teacher']) + '</td>';
+						'<td>' + String(rows[0]['time']) + '</td>';
+						'<td>' + String(rows[0]['room']) + '</td>';
+						'<td>' + String(rows[0]['waitlist']) + '</td>';
+		 			'</tr>'+
+					'</table>';
+
+	 	var headers = {};
+  		headers["Content-Type"] = "text/html";
+    		headers["Access-Control-Allow-Origin"] = "*";
+	    	response.writeHead(200, headers);
+	 	response.write(table);
 	 	response.end();
 	 });
 }

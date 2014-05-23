@@ -16,17 +16,11 @@ function start(handle, route)
 	function onRequest(request, response)
 	{
 		var getData = "";
-		//connection.connect();
 		var pathname = url.parse(request.url).pathname;
-		request.addListener("data", function(getDataChunk){
-			getData+=getDataChunk;
-		});
-		request.addListener("end", function()
-		{
-			route(handle ,connection,  pathname, getData, response);
-		});
-
+		getData = url.parse(request.url, true).query;
+		route(handle ,connection,  pathname, getData, response);
+		
 	}
-	http.createServer(onRequest).listen(1337);
+	http.createServer(onRequest).listen(1337,'localhost');
 }
 exports.start = start;

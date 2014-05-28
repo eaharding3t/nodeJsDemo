@@ -1,14 +1,14 @@
 //Called from the server when a request is recieved. Calls the correct handler.
-function route(handle, connection, pathname, getData, response)
+function route(handle, pathname, getData, response)
 {
 	if( typeof handle[pathname] === 'function')
 	{
- 		handle[pathname](connection, getData, response);
+ 		handle[pathname](getData, response);
 	}
 	
 	else if(pathname == '/')
 	{
-		handle['/onLoading'](connection, getData, response);
+		handle['/onLoading'](getData, response);
 	}
 	else
 	{
@@ -17,13 +17,13 @@ function route(handle, connection, pathname, getData, response)
 					+'xmlHttp.onreadystatechange=function(){'
 					+'document.getElementById("subjectList").innerHTML = xmlHttp.responseText;'
 					+'};'
-					+'xmlHttp.open("GET", "http://localhost:1337/onLoading", true);'
+					+'xmlHttp.open("GET", "http://localhost:1337/onLoading?dataType=1", true);'
 					+'xmlHttp.send();}'
 					+'function subjectExpand(sub){var xmlHttp = new XMLHttpRequest(); document.getElementById("subjectL").value = sub;'
 					+'xmlHttp.onreadystatechange=function(){'
 					+'document.getElementById("classList").innerHTML = xmlHttp.responseText;'
 					+'};'
-					+'var url = "http://localhost:1337/subjectExpand?subject=" +sub;'
+					+'var url = "http://localhost:1337/subjectExpand?subject=" +sub+"&dataType=1";'
 					+'xmlHttp.open("GET",url,true);'
 					+'xmlHttp.send();'
 					+'}'
@@ -31,14 +31,14 @@ function route(handle, connection, pathname, getData, response)
 					+'xmlHttp.onreadystatechange=function(){'
 					+'document.getElementById("sectionList").innerHTML = xmlHttp.responseText;'
 					+'};'
-					+'var url = "http://localhost:1337/classExpand?subject="+sub+"&classID="+classID; document.getElementById("sectionList").innerHTML = "pls";'
+					+'var url = "http://localhost:1337/classExpand?subject="+sub+"&classID="+classID+"&dataType=1"; document.getElementById("sectionList").innerHTML = "pls";'
 					+'xmlHttp.open("GET",url,true);'
 					+'xmlHttp.send();}'
 					+'function sectionExpand(sub, classID, sec){var xmlHttp = new XMLHttpRequest();'
 					+'xmlHttp.onreadystatechange=function(){'
 					+'document.getElementById("detailsList").innerHTML = xmlHttp.responseText;'
 					+'};'
-					+'var url = "http://localhost:1337/sectionExpand?subject="+sub+"&classID="+classID+"&section="+sec;'
+					+'var url = "http://localhost:1337/sectionExpand?subject="+sub+"&classID="+classID+"&section="+sec+"&dataType";'
 					+'xmlHttp.open("GET",url,true);'
 					+'xmlHttp.send();}'
 					+'</script></head>'

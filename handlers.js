@@ -1,101 +1,65 @@
-var sql = require("mysql");
+var mysql = require("mysql");
+var database = require("./database")
 // Called on page load to populate subject list
-function onLoading(connection, getData, response, headers)
+function onLoading(getData, response)
 {
-	connection.query('SELECT subject FROM classDB', function(error, rows, feilds){
-		if(error)
-		{
-			throw error;
-		}
-		var redun = [];
-  		var test = '<form action="">'+ 
+	var test = '<form action="">'+ 
      	'<select id="subjectL" onchange="subjectExpand(this.value)">'+
      	'<option value="">Select a subject</option>';
-  		for (var i=0; i < rows.length; i++) {
-  			if(redun.indexOf(rows[i]['subject']) == -1)
-  			{
-   				test += '<option value="'+rows[i]['subject']+'">' + String(rows[i]['subject']) + "</option>";
-   				redun.push(rows[i]['subject']);
-   			}
-  		}
-  		test += '</select>'+'</form>';
+	database.queryDB(getData, test, getData['dataType'], ['subject'])(function(htmlString){
+		htmlString+='</select>'+'</form>';
   		var headers = {}
   		headers["Content-Type"] = "text/html";
   		headers["Access-Control-Allow-Origin"] = "*";
 		response.writeHead(200, headers);
-		response.write(test);
+		response.write(htmlString);
 		response.end();
-	});
+	}, function(errback){throw errback});
 }
 //Called when the user first selects a subject
-function subjectExpand(connection, getData, response, headers)
+function subjectExpand(getData, response)
 {
-	connection.query('SELECT classID FROM classDB WHERE subject = ?', [getData["subject"]], function(error, rows, feilds){
-		if(error)
-		{
-			throw error;
-		}
-		var redun = [];
-		var temp = "document.getElementById('subjectL').value";
-		var list = '<form action="">'+ 
-  					'<select id="classL" onchange="classExpand(this.value,'+temp+') ">'+
-  					'<option value="">Select a classID</option>';
-		for (var i=0; i < rows.length; i++) {
-			if(redun.indexOf(rows[i]['classID']) == -1)
-			{
-				list += '<option value="' + rows[i]['classID'] + '">' + String(rows[i]['classID']) + "</option>";
-				redun.push(rows[i]['classID']);
-			}
-		}
-		list += '</select>'+
-				'</form>';
-
-
-  		var headers = {};
+	var temp = "document.getElementById('subjectL').value";
+	var list = '<form action="">'+ 
+  		'<select id="classL" onchange="classExpand(this.value,'+temp+') ">'+
+  		'<option value="">Select a classID</option>';
+	database.queryDB(getData, list, getData['dataType'], ['classID','subject'])(function(htmlString){
+		htmlString+='</select>'+'</form>';
+  		var headers = {}
   		headers["Content-Type"] = "text/html";
-    		headers["Access-Control-Allow-Origin"] = "*";
-    		response.writeHead(200, headers);
-		response.write(list);
+  		headers["Access-Control-Allow-Origin"] = "*";
+		response.writeHead(200, headers);
+		response.write(htmlString);
 		response.end();
 	});
-
 }
 //Called when a user first selects a class
-function classExpand(connection, getData, response, headers)
+function classExpand(getData, response)
 {
-	connection.query('SELECT section FROM classDB WHERE subject = ? AND classID = ?', [getData["subject"], getData["classID"]], function(error, rows, feilds){
-		if(error)
-		{
-			throw error;
-		}
-		var redun = [];
-		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value";
-		var list = '<form action="">'+ 
-  					'<select id="sectionL" onchange="sectionExpand('+temp+',this.value)">'+
-  					'<option value="">Select a section</option>';
-		for (var i=0; i < rows.length; i++) {
-			if(redun.indexOf(rows[i]['section']) == -1)
-			{
-				list += '<option value="' + rows[i]['section'] + '">' + String(rows[i]['section']) + '</option>';
-				redun.push(rows[i]['section']);
-			}
-		}
-		list += '</select>'+
-				'</form>';
-
-
-		var headers = {};
+	var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value";
+	var list = '<form action="">'+ 
+  		'<select id="sectionL" onchange="sectionExpand('+temp+',this.value)">'+
+  		'<option value="">Select a section</option>';
+	database.queryDB(getData, list, getData['dataType'], ['section','classID','subject'])(function(htmlString){
+		htmlString+='</select>'+'</form>';
+  		var headers = {}
   		headers["Content-Type"] = "text/html";
-    		headers["Access-Control-Allow-Origin"] = "*";
-    		response.writeHead(200, headers);
-		response.write(list);
+  		headers["Access-Control-Allow-Origin"] = "*";
+		response.writeHead(200, headers);
+		response.write(htmlString);
 		response.end();
 
 	});
 }
 //Called when a user first selects a section
-function sectionExpand(connection, getData, response, headers)
+function sectionExpand(getData, response)
 {
+	var connection = mysql.createConnection({
+			host : '127.0.0.1',
+			database: 'test',
+			user : 'root',
+			password: 'He18272752!'
+			});
 	connection.query('SELECT slotsOpen, slotsTotal, teacher, time, room, waitList FROM classDB WHERE subject = ? AND classID = ? AND section = ?',
 	 [getData["subject"], getData["classID"], getData["section"]],
 	 function(error, rows, feilds){

@@ -1,11 +1,11 @@
 var mysql = require("mysql");
-//var AWS = require("aws-skd");
-function queryDB(getData, htmlString, dataType, fuctionCalledFrom)
+var AWS = require("aws-sdk");
+function queryDB(getData, htmlString, dataType, functionCalledFrom)
 {
 	var queryString ="";
 	return function(callback, errback){
 		if(dataType == 0){
-			if(fuctionCalledFrom.length == 0)
+			if(functionCalledFrom.length == 0)
 			{
 				queryString = 'SELECT subject FROM classDB';
 			}
@@ -29,9 +29,9 @@ function queryDB(getData, htmlString, dataType, fuctionCalledFrom)
 				'room': '325','waitList':10,'slotsTotal':60,'slotsOpen':12,'teacher': 'electricalTeacher'};
 			for (var i=0; i < rows.length; i++) {
 				var select = true;
-				for(var k = 1; k<fuctionCalledFrom.length;k++)
+				for(var k = 1; k<functionCalledFrom.length;k++)
 				{
-					if(rows[i][fuctionCalledFrom[k]] == getData[functionCalledFrom[k]]){
+					if(rows[i][functionCalledFrom[k]] == getData[functionCalledFrom[k]]){
 					}
 					else
 					{
@@ -40,10 +40,10 @@ function queryDB(getData, htmlString, dataType, fuctionCalledFrom)
 					}
 				}
 				if(select){
-  					if(redun.indexOf(rows[i][fuctionCalledFrom[0]]) == -1)
+  					if(redun.indexOf(rows[i][functionCalledFrom[0]]) == -1)
   					{
-   						htmlString += '<option value="'+rows[i][fuctionCalledFrom[0]]+'">' + String(rows[i][fuctionCalledFrom[0]]) + "</option>";
-   						redun.push(rows[i][fuctionCalledFrom[0]]);
+   						htmlString += '<option value="'+rows[i][functionCalledFrom[0]]+'">' + String(rows[i][functionCalledFrom[0]]) + "</option>";
+   						redun.push(rows[i][functionCalledFrom[0]]);
    					}
    				}
 			}
@@ -51,19 +51,19 @@ function queryDB(getData, htmlString, dataType, fuctionCalledFrom)
 		}
 		else if (dataType == 1)
 		{
-			if(fuctionCalledFrom.length == 1)
+			if(functionCalledFrom.length == 1)
 			{
 				queryString = 'SELECT subject FROM classDB';
 			}
 			else
 			{
-				queryString = "SELECT "+fuctionCalledFrom[0]+" FROM classDB where ";
-				for(var i =1;i<fuctionCalledFrom.length;i++){
+				queryString = "SELECT "+functionCalledFrom[0]+" FROM classDB where ";
+				for(var i =1;i<functionCalledFrom.length;i++){
 					if(i>1)
 					{
 						queryString+=" AND ";
 					}
-					queryString +=fuctionCalledFrom[i]+"="+'"'+getData[fuctionCalledFrom[i]]+'"';
+					queryString +=functionCalledFrom[i]+"="+'"'+getData[functionCalledFrom[i]]+'"';
 				}
 			}
 			var redun =[];
@@ -79,10 +79,10 @@ function queryDB(getData, htmlString, dataType, fuctionCalledFrom)
 					throw error;
 				}
   				for (var i=0; i < rows.length; i++) {
-  					if(redun.indexOf(rows[i][fuctionCalledFrom[0]]) == -1)
+  					if(redun.indexOf(rows[i][functionCalledFrom[0]]) == -1)
   					{
-   						htmlString += '<option value="'+rows[i][fuctionCalledFrom[0]]+'">' + String(rows[i][fuctionCalledFrom[0]]) + "</option>";
-   						redun.push(rows[i][fuctionCalledFrom[0]]);
+   						htmlString += '<option value="'+rows[i][functionCalledFrom[0]]+'">' + String(rows[i][functionCalledFrom[0]]) + "</option>";
+   						redun.push(rows[i][functionCalledFrom[0]]);
    					}
   				}
   				callback(htmlString);
@@ -90,21 +90,86 @@ function queryDB(getData, htmlString, dataType, fuctionCalledFrom)
 		}
 		else if(dataType == 2)
 		{
-			/*
-			var attributes
-			var params = {
-				TableName:'classTable',
-				IndexName: fuctionCalledFrom[0],
-				AttributesToGet:[fuctionCalledFrom[0]],
-				KeyConditions: {
-					findIt:
-					{
-						AttributeValueList: []
-						ComparisonOperator: 'EQ'
+			var redun = [];
+			AWS.config.loadFromPath('./config.json');
+			var db = new AWS.DynamoDB();
+			if(functionCalledFrom[0] == 'subject'){
+				var params = {
+					TableName: 'classTable',
+					AttributesToGet: [functionCalledFrom[0]],
+				}
+				db.scan(params, function(err,data){
+					if(err)
+						{throw err;}
+					else{
+						console.log(data['Items'][0]['subject']['S']);
+						for (var i=0; i < data['Items'].length; i++) {
+  							if(redun.indexOf(data['Items'][i]['subject']['S']) == -1)
+  							{
+   								htmlString += '<option value="'+data['Items'][i]['subject']['S']+'">' + String(data['Items'][i]['subject']['S']) + "</option>";
+   								redun.push(data['Items'][i]['subject']['S']);
+   							}
+  						}
+  						callback(htmlString);
+					}
+
+				});
+			}
+			else if(functionCalledFrom[0] = 'classID')
+			{
+				var params = {
+					TableName:'classTable',
+					IndexName: functionCalledFrom[1]+"-index",
+					AttributesToGet: [functionCalledFrom[0]],
+					KeyConditions: {
+						"subject":
+						{
+							"AttributeValueList": [{"S" : getData['subject']}],
+							ComparisonOperator: 'EQ'
+						}
 					}
 				}
+				db.query(params, function(err,data){
+					if(err)
+						{throw err;}
+					else{
+						console.log(data['Items'][0]['classID']['S']);
+						for (var i=0; i < data['Items'].length; i++) {
+  							if(redun.indexOf(data['Items'][i]['classID']['S']) == -1)
+  							{
+   								htmlString += '<option value="'+data['Items'][i]['classID']['S']+'">' + String(data['Items'][i]['classID']['S']) + "</option>";
+   								redun.push(data['Items'][i]['classID']['S']);
+   							}
+  						}
+  						callback(htmlString);
+					}
+				});
 			}
-			*/
+			else if(functionCalledFrom[0] = 'section'){
+				var params = {
+					TableName:'classTable',
+					Key: {
+						'classID':{
+							'S': getData['classID']
+						}
+					},
+					AttributesToGet: [functionCalledFrom[0], functionCalledFrom[2]]
+				}
+				db.getItem(params,function(err,data){
+					if(err){
+						throw err;
+					}
+					else{
+						console.log(data);
+						for(var i =0; i<data['Items'].length;i++)
+						{
+							htmlString += '<option value="'+data['Items'][i]['section']['S']+'">'+String(data['Items'][i]['section']['S'])+"</option>";
+							redun.push(data['Items'][i]['section']['S']);
+						}
+					}
+					callback(htmlString);
+				});
+			}
 		}
 		else if (dataType == 3)
 		{

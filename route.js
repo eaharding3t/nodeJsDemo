@@ -41,12 +41,17 @@ function route(handle, pathname, getData, response)
 					+'var url = "http://localhost:1337/sectionExpand?subject="+sub+"&classID="+classID+"&section="+sec+"&dataType=3";'
 					+'xmlHttp.open("GET",url,true);'
 					+'xmlHttp.send();}'
+					+'function fileUpload(){var xmlHttp = new XMLHttpRequest();'
+					+'xmlHttp.onreadystatechange=function(){};'
+					+'xmlHttp.open("GET", "http://localhost:1337/fileUpload", true);'
+					+'xmlHttp.send();}'
 					+'</script></head>'
 					+'<body onload="onLoading()">'
 					+'<div id = "subjectList">testing this subject</div>'
 					+'<div id = "classList">testing this class</div>'
 					+'<div id = "sectionList">testing this section</div>'
 					+'<div id = "detailsList">testing these details</div>'
+					+'<div id = "fileUpload"><button onclick = "fileUpload()">Upload a file.</button></form>'
 					+'</body>'
 					+'</html>';
 		response.write(htm);

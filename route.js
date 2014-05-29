@@ -1,17 +1,10 @@
 //Called from the server when a request is recieved. Calls the correct handler.
 function route(handle, pathname, getData, response)
 {
-	if( typeof handle[pathname] === 'function')
-	{
+	if (typeof handle[pathname] === 'function') {
  		handle[pathname](getData, response);
-	}
-	
-	else if(pathname == '/')
-	{
-		handle['/onLoading'](getData, response);
-	}
-	else
-	{
+	}	
+	else {
 		response.writeHead(200, {"Content-Type" : "text/html"});
 		var htm= '<!DOCTYPE html><html><head><script>function onLoading(){var xmlHttp = new XMLHttpRequest();' 
 					+'xmlHttp.onreadystatechange=function(){'
@@ -51,7 +44,7 @@ function route(handle, pathname, getData, response)
 					+'<div id = "classList">testing this class</div>'
 					+'<div id = "sectionList">testing this section</div>'
 					+'<div id = "detailsList">testing these details</div>'
-					+'<div id = "fileUpload"><button onclick = "fileUpload()">Upload a file.</button></form>'
+					+'<div id = "fileUpload"><button onclick = "fileUpload()">Upload a file</button></form>'
 					+'</body>'
 					+'</html>';
 		response.write(htm);

@@ -6,5 +6,6 @@ handle['/onLoading'] = handlers.onLoading;
 handle['/subjectExpand'] = handlers.subjectExpand;
 handle['/classExpand'] = handlers.classExpand;
 handle['/sectionExpand'] = handlers.sectionExpand;
+handle['/fileUpload'] = handlers.fileUpload;
 console.log("work");
 server.start(handle, router.route);

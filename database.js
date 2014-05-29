@@ -198,9 +198,15 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
 			}
 
 			if(functionCalledFrom.length == 2) {
-				db.classDB.find({subject:getData[functionCalledFrom[1]]}, function(err, docs) {    
+				db.classDB.find({subject:getData[functionCalledFrom[1]]}).sort({classID:''}, function(err, docs) {
+					var last = "";
+					var next = ""; 
     				for (var i=0; i<docs.length; i++) {
-    					htmlString += '<option value="' + docs[i]["classID"] + '">' + String(docs[i]["classID"]) + "</option>";
+    					next = docs[i]["classID"];
+    					if (next != last) {
+    						htmlString += '<option value="' + docs[i]["classID"] + '">' + String(docs[i]["classID"]) + "</option>";
+    					}
+    					last = next;
     				}
     				callback(htmlString);
 				});

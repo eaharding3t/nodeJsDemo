@@ -1,6 +1,7 @@
 var mysql = require("mysql");
-var database = require("./database")
+var database = require("./database");
 var mongojs = require("mongojs");
+var AWS = require("aws-sdk");
 // Called on page load to populate subject list
 function onLoading(getData, response)
 {
@@ -99,7 +100,56 @@ function sectionExpand(getData, response)
 	 	});
 	}
 	else if (getData['dataType'] == 2){
-		//dynamodb
+		AWS.config.loadFromPath('./config.json');
+		var db = new AWS.DynamoDB();
+		var table ="";
+		var params = {
+			TableName:'classTable',
+			IndexName: "classID"+"-index",
+			KeyConditions: {
+				"classID":
+				{
+					"AttributeValueList": [{"S" : getData['classID']}],
+					ComparisonOperator: 'EQ'
+				}
+			}
+		}
+		db.query(params, function(err,data){
+			var locate = 0;
+			for(var i =0;i<data['Items'].length;i++)
+			{
+				if(getData['section']==data['Items'][i]['section']['S'])
+				{
+					locate = i;
+					break;
+				}
+			}
+			table += '<table border="1" style="width:500px">'+
+						'<tr>'+
+  							'<td>Slots open</td>'+
+  							'<td>Slots total</td>'+		
+  							'<td>Teacher</td>'+
+  							'<td>Time</td>'+
+  							'<td>Room</td>'+
+  							'<td>Waitlist</td>'+
+						'</tr>'+
+						'<tr>'+
+							'<td>' + String(data['Items'][locate]['slotsOpen']['N']) + '</td>'+
+							'<td>' + String(data['Items'][locate]["slotsTotal"]['N']) + '</td>'+
+							'<td>' + String(data['Items'][locate]["teacher"]['S']) + '</td>'+
+							'<td>' + String(data['Items'][locate]["time"]['N']) + '</td>'+
+							'<td>' + String(data['Items'][locate]["room"]['S']) + '</td>'+
+							'<td>' + String(data['Items'][locate]["waitList"]['N']) + '</td>'+
+		 				'</tr>'+
+						'</table>';
+
+			var headers = {};
+  			headers["Content-Type"] = "text/html";
+    		headers["Access-Control-Allow-Origin"] = "*";
+			response.writeHead(200, headers);
+			response.write(table);
+			response.end();
+		});
 	}
 
 	//mongo

@@ -2,6 +2,7 @@ var mysql = require("mysql");
 var database = require("./database");
 var mongojs = require("mongojs");
 var AWS = require("aws-sdk");
+var fs = require("fs");
 // Called on page load to populate subject list
 function onLoading(getData, response)
 {
@@ -188,6 +189,28 @@ function sectionExpand(getData, response)
 	}
 }
 
+function fileUpload(getData, response) {
+	AWS.config.loadFromPath('./config.json');
+	var s3 = new AWS.S3();
+	var file = "./test";
+	fs.readFile(file, function(err, data) {
+		if(err) {
+			throw err;
+		}
+		console.log(data);
+		var params = {
+  			Bucket: 'ke_bucket', // required
+  			Key: 'ke_key', // required
+  			Body: data,
+		}
+		s3.putObject(params, function(err, data) {
+  			if (err) console.log(err, err.stack);
+  			else     console.log(data);           
+		});
+	});
+}
+
+exports.fileUpload = fileUpload;
 exports.onLoading = onLoading;
 exports.subjectExpand = subjectExpand;
 exports.classExpand = classExpand;

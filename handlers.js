@@ -31,7 +31,7 @@ function subjectExpand(getData, response)
 		response.writeHead(200, headers);
 		response.write(htmlString);
 		response.end();
-	});
+	},function(errback){throw errback});
 }
 //Called when a user first selects a class
 function classExpand(getData, response)
@@ -40,7 +40,9 @@ function classExpand(getData, response)
 	var list = '<form action="">'+ 
   		'<select id="sectionL" onchange="sectionExpand('+temp+',this.value)">'+
   		'<option value="">Select a section</option>';
-	database.queryDB(getData, list, getData['dataType'], ['section','classID','subject'])(function(htmlString){
+  		var help = ['section','classID','subject'];
+  		console.log(help[0]);
+	database.queryDB(getData, list, getData['dataType'], help)(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {}
   		headers["Content-Type"] = "text/html";
@@ -49,7 +51,7 @@ function classExpand(getData, response)
 		response.write(htmlString);
 		response.end();
 
-	});
+	},function(errback){throw errback});
 }
 //Called when a user first selects a section
 function sectionExpand(getData, response)

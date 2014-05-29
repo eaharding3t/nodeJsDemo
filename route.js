@@ -23,7 +23,7 @@ function route(handle, pathname, getData, response)
 					+'xmlHttp.onreadystatechange=function(){'
 					+'document.getElementById("classList").innerHTML = xmlHttp.responseText;'
 					+'};'
-					+'var url = "http://localhost:1337/subjectExpand?subject=" +sub+"&dataType=1";'
+					+'var url = "http://localhost:1337/subjectExpand?subject=" +sub+"&dataType=2";'
 					+'xmlHttp.open("GET",url,true);'
 					+'xmlHttp.send();'
 					+'}'

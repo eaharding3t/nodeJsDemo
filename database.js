@@ -115,7 +115,7 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
 
 				});
 			}
-			else if(functionCalledFrom[0] = 'classID')
+			else if(functionCalledFrom[0] == 'classID')
 			{
 				var params = {
 					TableName:'classTable',
@@ -145,29 +145,34 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
 					}
 				});
 			}
-			else if(functionCalledFrom[0] = 'section'){
+			else if(functionCalledFrom[0] == 'section')
+			{
 				var params = {
 					TableName:'classTable',
-					Key: {
-						'classID':{
-							'S': getData['classID']
-						}
-					},
-					AttributesToGet: [functionCalledFrom[0], functionCalledFrom[2]]
-				}
-				db.getItem(params,function(err,data){
-					if(err){
-						throw err;
-					}
-					else{
-						console.log(data);
-						for(var i =0; i<data['Items'].length;i++)
+					IndexName: "classID"+"-index",
+					AttributesToGet: ["section"],
+					KeyConditions: {
+						"classID":
 						{
-							htmlString += '<option value="'+data['Items'][i]['section']['S']+'">'+String(data['Items'][i]['section']['S'])+"</option>";
-							redun.push(data['Items'][i]['section']['S']);
+							"AttributeValueList": [{"S" : getData['classID']}],
+							ComparisonOperator: 'EQ'
 						}
 					}
-					callback(htmlString);
+				}
+				db.query(params, function(err,data){
+					if(err)
+						{throw err;}
+					else{
+						console.log(data['Items'][0]['section']['S']);
+						for (var i=0; i < data['Items'].length; i++) {
+  							if(redun.indexOf(data['Items'][i]['section']['S']) == -1)
+  							{
+   								htmlString += '<option value="'+data['Items'][i]['section']['S']+'">' + String(data['Items'][i]['section']['S']) + "</option>";
+   								redun.push(data['Items'][i]['section']['S']);
+   							}
+  						}
+  						callback(htmlString);
+					}
 				});
 			}
 		}

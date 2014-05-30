@@ -72,7 +72,7 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
 			host : '127.0.0.1',
 			database: 'test',
 			user : 'root',
-			password: 'He18272752!'
+			password: 'password123$'
 			});
 			connection.query(queryString, function(error, rows, feilds){
 				if(error)

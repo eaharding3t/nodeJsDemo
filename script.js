@@ -10,6 +10,9 @@ function onLoading(){
 	}
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("subjectList").innerHTML = xmlHttp.responseText;
+		document.getElementById("classList").innerHTML = "";
+		document.getElementById("sectionList").innerHTML ="";
+		document.getElementById("detailsList").innerHTML = "";
 	};
 	xmlHttp.open("GET", "http://localhost:1337/onLoading?databaseType="+databaseType, true);
 	xmlHttp.send();

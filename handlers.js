@@ -63,9 +63,9 @@ function sectionExpand(getData, response)
 				host : '127.0.0.1',
 				database: 'test',
 				user : 'root',
-				password: 'He18272752!'
+				password: 'password123$'
 			});
-		connection.query('SELECT slotsOpen, slotsTotal, teacher, time, room, waitList FROM classDB WHERE subject = ? AND classID = ? AND section = ?',
+		connection.query('Select room, time, waitList, slotsTotal, slotsOpen, teacher from subjectTable, classIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.classID = classIDTable.classID) AND (sectionName = ?) AND (className = ?) AND (subjectName = ?)',
 	 	[getData["subject"], getData["classID"], getData["section"]],
 	 	function(error, rows, feilds){
 	 		if(error)

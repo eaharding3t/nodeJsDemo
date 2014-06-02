@@ -1,61 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script>
-			function loadXMLDoc(url, callBack)
-			{
-				var xmlHttp = new XMLHttpRequest();
-				xmlHttp.onreadystatechange=callBack;
-				xmlHttp.open("GET", url, true);
-				xmlHttp.send();
-			}
-			function onLoad()
-			{
-				loadXMLDoc("index.js/onLoad", function(){
-					if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
-					{
-						document.getElementById("subjectList").innerHTML = xmlHttp.responseText;
-					}
-				});
-			}
-			function subjectExpand(subject)
-			{
-				var url = "index.js/subjectExpand?subject=" + subject;
-				loadXMLDoc(url, function(){
-					if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
-					{
-						document.getElementById("sectionList").innerHTML = "";
-						document.getElementById("details").innerHTML = "";
-						document.getElementById("classList").innerHTML = xmlHttp.responseText;
-					}
-				});
-			}
-			function classExpand(subject, classID)
-			{
-				var url = "index.js/classExpand?subject=" + subject + "&classID=" + classID;
-				loadXMLDoc(url, function(){
-					if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
-					{
-						document.getElementById("details").innerHTML = "";
-						document.getElementById("sectionList").innerHTML = xmlHttp.responseText;
-					}
-				});
-			}
-			function sectionExpand(subject, classID, section)
-			{
-				var url = "index.js/subjectExpand?subject=" + subject + "&classID" + classID + "&section=" + section;
-				loadXMLDoc(url, function(){
-					if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
-					{
-						document.getElementById("details").innerHTML = xmlHttp.responseText;
-					}
-				});
-			}
-			window.onload = onLoad();
-			
-		</script>
+		<script type = "text/javascript" src="./script.js"></script>
   	</head>
 	<body>
+		<form oninput = "onLoading()">
+			<input type = "radio" name = "databaseType" id = "0" value = "0" onChange = "onLoading()">Hard-Coded</input>
+			<input type = "radio" name = "databaseType" id = "1" value = "1" onChange = "onLoading()">MySql</input>
+			<input type = "radio" name = "databaseType" id = "2" value = "2" onChange = "onLoading()">DynamoDB</input>
+			<input type = "radio" name = "databaseType" id = "3" value = "3" onChange = "onLoading()">MongoDB</input>
+		</form>
 		<div id = "subjectList">testing this subject</div>
 		<div id = "classList">testing this class</div>
 		<div id = "sectionList">testing this section</div>

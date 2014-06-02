@@ -1,11 +1,12 @@
 var mysql = require("mysql");
 var AWS = require("aws-sdk");
 var mongojs = require("mongojs");
-function queryDB(getData, htmlString, dataType, functionCalledFrom)
+function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 {
 	var queryString ="";
 	return function(callback, errback){
-		if(dataType == 0){
+		//This is a hard-coded version of the sql database
+		if(databaseType == 0){
 			if(functionCalledFrom.length == 0)
 			{
 				queryString = 'SELECT subject FROM classDB';
@@ -50,7 +51,8 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
 			}
   					callback(htmlString);
 		}
-		else if (dataType == 1)
+		//This call uses the data from a mysql server of your choice.
+		else if (databaseType == 1)
 		{
 			if(functionCalledFrom.length == 1)
 			{
@@ -68,6 +70,7 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
 				}
 			}
 			var redun =[];
+			//For different servers change connection data
 			var connection = mysql.createConnection({
 			host : '127.0.0.1',
 			database: 'test',
@@ -89,7 +92,7 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
   				callback(htmlString);
 			});
 		}
-		else if(dataType == 2)
+		else if(databaseType == 2)
 		{
 			var redun = [];
 			AWS.config.loadFromPath('./config.json');
@@ -177,7 +180,7 @@ function queryDB(getData, htmlString, dataType, functionCalledFrom)
 				});
 			}
 		}
-		else if (dataType == 3)
+		else if (databaseType == 3)
 		{
 			var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",
     			db = mongojs.connect(uri, ["classDB"]);

@@ -56,20 +56,16 @@ function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 		{
 			if(functionCalledFrom.length == 1)
 			{
-				queryString = 'SELECT subject FROM classDB';
+				queryString = 'Select subjectName from subjectTable';
 			}
-			else
+			else if(functionCalledFrom.length == 2)
 			{
-				queryString = "SELECT "+functionCalledFrom[0]+" FROM classDB where ";
-				for(var i =1;i<functionCalledFrom.length;i++){
-					if(i>1)
-					{
-						queryString+=" AND ";
-					}
-					queryString +=functionCalledFrom[i]+"="+'"'+getData[functionCalledFrom[i]]+'"';
-				}
+				queryString = 'Select className from subjectTable, classIDTable WHERE (classIDTable.subjectID = subjectTable.subjectID) AND (subjectTable.subjectName = '+getData['subject']+')';
 			}
-			var redun =[];
+			else if(functionCalledFrom.length == 3)
+			{
+				queryString = 'Select sectionName from subjectTable, classIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.classID = classIDTable.classID) AND (subjectTable.subjectName = '+getData['subject']+') AND (classIDTable.className = '+getData['classID']+')';		
+			}
 			//For different servers change connection data
 			var connection = mysql.createConnection({
 			host : '127.0.0.1',

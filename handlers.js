@@ -127,6 +127,7 @@ function sectionExpand(getData, response)
 					break;
 				}
 			}
+			console.log(data['Items']);
 			table += '<table border="1" style="width:500px">'+
 						'<tr>'+
   							'<td>Slots open</td>'+

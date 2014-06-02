@@ -9,7 +9,7 @@ function onLoading(getData, response)
 	var test = '<form action="">'+ 
      	'<select id="subjectL" onchange="subjectExpand(this.value)">'+
      	'<option value="">Select a subject</option>';
-	database.queryDB(getData, test, getData['dataType'], ['subject'])(function(htmlString){
+	database.queryDB(getData, test, getData['databaseType'], ['subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {}
   		headers["Content-Type"] = "text/html";
@@ -26,7 +26,7 @@ function subjectExpand(getData, response)
 	var list = '<form action="">'+ 
   		'<select id="classL" onchange="classExpand(this.value,'+temp+') ">'+
   		'<option value="">Select a classID</option>';
-	database.queryDB(getData, list, getData['dataType'], ['classID','subject'])(function(htmlString){
+	database.queryDB(getData, list, getData['databaseType'], ['classID','subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {}
   		headers["Content-Type"] = "text/html";
@@ -45,7 +45,7 @@ function classExpand(getData, response)
   		'<option value="">Select a section</option>';
   		var help = ['section','classID','subject'];
   		console.log(help[0]);
-	database.queryDB(getData, list, getData['dataType'], help)(function(htmlString){
+	database.queryDB(getData, list, getData['databaseType'], help)(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {}
   		headers["Content-Type"] = "text/html";
@@ -58,7 +58,7 @@ function classExpand(getData, response)
 //Called when a user first selects a section
 function sectionExpand(getData, response)
 {
-	if (getData['dataType'] == 1) {
+	if (getData['databaseType'] == 1) {
 		var connection = mysql.createConnection({
 				host : '127.0.0.1',
 				database: 'test',
@@ -95,12 +95,14 @@ function sectionExpand(getData, response)
 	 		var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('sectionL').value";
+    		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 	    	response.writeHead(200, headers);
 	 		response.write(table);
 	 		response.end();
 	 	});
 	}
-	else if (getData['dataType'] == 2){
+	else if (getData['databaseType'] == 2){
 		AWS.config.loadFromPath('./config.json');
 		var db = new AWS.DynamoDB();
 		var table ="";
@@ -147,6 +149,8 @@ function sectionExpand(getData, response)
 			var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('subjectL')";
+    		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
 			response.end();
@@ -154,7 +158,7 @@ function sectionExpand(getData, response)
 	}
 
 	//mongo
-	else if (getData['dataType'] == 3) {
+	else if (getData['databaseType'] == 3) {
 		var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",
     	db = mongojs.connect(uri, ["classDB"]),
     	table = "";
@@ -182,6 +186,7 @@ function sectionExpand(getData, response)
 			var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
+    		table+='<br><div id = "fileUpload"><button onclick = "fileUpload()">Upload a file</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
 			response.end();
@@ -192,20 +197,24 @@ function sectionExpand(getData, response)
 function fileUpload(getData, response) {
 	AWS.config.loadFromPath('./config.json');
 	var s3 = new AWS.S3();
-	var file = "./test";
-	fs.readFile(file, function(err, data) {
-		if(err) {
-			throw err;
-		}
-		console.log(data);
-		var params = {
-  			Bucket: 'ke_bucket', // required
-  			Key: 'ke_key', // required
-  			Body: data,
-		}
-		s3.putObject(params, function(err, data) {
-  			if (err) console.log(err, err.stack);
-  			else     console.log(data);           
+	var file = "./classDetails.txt";
+	var details = "subject=" + getData['subject'] + "classID="+getData['classID']+"section="+getData['section'];
+	fs.writeFile(file, details,function(err){
+		if(err){throw err;}
+		var file2 = "./classDetails.txt";
+		console.log("test");
+		fs.readFile(file2, function(err, data) {
+			if(err) {throw err;}
+			console.log(data);
+			var params = {
+  				Bucket: 'ke_bucket', // required
+  				Key: 'ke_key', // required
+  				Body: data,
+			}
+			s3.putObject(params, function(err, data) {
+  				if (err) console.log(err, err.stack);
+  				else     console.log(data);           
+			});
 		});
 	});
 }

@@ -7,6 +7,7 @@ function route(handle, pathname, getData, response)
 	else {
 		response.writeHead(200, {"Content-Type" : "text/html"});
 		var htm= '<!DOCTYPE html><html><head><script type = "text/javascript" src="./script.js">'
+
 					+'</script></head>'
 					+'<body onload="onLoading()">'
 					+'<div id = "subjectList">testing this subject</div>'

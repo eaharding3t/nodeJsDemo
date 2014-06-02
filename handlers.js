@@ -193,6 +193,8 @@ function fileUpload(getData, response) {
 	AWS.config.loadFromPath('./config.json');
 	var s3 = new AWS.S3();
 	var file = "./test";
+	//var S3_Info = '';
+
 	fs.readFile(file, function(err, data) {
 		if(err) {
 			throw err;
@@ -206,8 +208,15 @@ function fileUpload(getData, response) {
 		s3.putObject(params, function(err, data) {
   			if (err) console.log(err, err.stack);
   			else     console.log(data);           
-		});
+		});				
 	});
+
+	/*var headers = {};
+  		headers["Content-Type"] = "text/html";
+    	headers["Access-Control-Allow-Origin"] = "*";
+		response.writeHead(200, headers);
+		response.write(S3_Info);
+		response.end();*/
 }
 
 exports.fileUpload = fileUpload;

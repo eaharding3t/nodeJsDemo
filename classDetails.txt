@@ -1,1 +1,1 @@
-subject=mathclassID=linearsection=500
+subject=cs classID=algorithms section=001

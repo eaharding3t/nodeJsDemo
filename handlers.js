@@ -24,9 +24,9 @@ function subjectExpand(getData, response)
 {
 	var temp = "document.getElementById('subjectL').value";
 	var list = '<form action="">'+ 
-  		'<select id="classL" onchange="classExpand(this.value,'+temp+') ">'+
-  		'<option value="">Select a classID</option>';
-	database.queryDB(getData, list, getData['databaseType'], ['classID','subject'])(function(htmlString){
+  		'<select id="courseL" onchange="courseExpand(this.value,'+temp+') ">'+
+  		'<option value="">Select a courseID</option>';
+	database.queryDB(getData, list, getData['databaseType'], ['courseID','subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {};
   		headers["Content-Type"] = "text/html";
@@ -36,14 +36,14 @@ function subjectExpand(getData, response)
 		response.end();
 	}, function(errback){throw errback;});
 }
-//Called when a user first selects a class
-function classExpand(getData, response)
+//Called when a user first selects a course
+function courseExpand(getData, response)
 {
-	var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value";
+	var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
 	var list = '<form action="">'+ 
   		'<select id="sectionL" onchange="sectionExpand('+temp+',this.value)">'+
   		'<option value="">Select a section</option>';
-  		var help = ['section','classID','subject'];
+  		var help = ['section','courseID','subject'];
   		console.log(help[0]);
 	database.queryDB(getData, list, getData['databaseType'], help)(function(htmlString){
 		htmlString+='</select>'+'</form>';
@@ -63,10 +63,10 @@ function sectionExpand(getData, response)
 				host : '127.0.0.1',
 				database: 'test',
 				user : 'root',
-				password: 'He18272752!'
+				password: 'password123$'
 			});
-		connection.query('SELECT slotsOpen, slotsTotal, teacher, time, room, waitList FROM classDB WHERE subject = ? AND classID = ? AND section = ?',
-	 	[getData["subject"], getData["classID"], getData["section"]],
+		connection.query('Select room, time, waitList, slotsTotal, slotsOpen, teacher from subjectTable, courseIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.courseID = courseIDTable.courseID) AND (sectionName = ?) AND (courseName = ?) AND (subjectName = ?)',
+	 	[getData["subject"], getData["courseID"], getData["section"]],
 	 	function(error, rows, feilds){
 	 		if(error)
 	 		{
@@ -95,7 +95,7 @@ function sectionExpand(getData, response)
 	 		var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
-    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('sectionL').value";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 	    	response.writeHead(200, headers);
 	 		response.write(table);
@@ -127,6 +127,7 @@ function sectionExpand(getData, response)
 					break;
 				}
 			}
+			console.log(data['Items']);
 			table += '<table border="1" style="width:500px">'+
 						'<tr>'+
   							'<td>Slots open</td>'+
@@ -149,7 +150,7 @@ function sectionExpand(getData, response)
 			var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
-    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('subjectL')";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('subjectL')";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
@@ -163,7 +164,7 @@ function sectionExpand(getData, response)
     	db = mongojs.connect(uri, ["classDB"]),
     	table = "";
 
-		db.classDB.find({subject:getData["subject"], classID:getData["classID"], section:getData["section"]}, function(err, docs) {
+		db.classDB.find({subject:getData["subject"], classID:getData["courseID"], section:getData["section"]}, function(err, docs) {
 			table += '<table border="1" style="width:500px">'+
 						'<tr>'+
   							'<td>Slots open</td>'+
@@ -198,7 +199,7 @@ function sectionExpand(getData, response)
 function fileUpload(getData, response) {
 	AWS.config.loadFromPath('./config.json');
 	var s3 = new AWS.S3();
-	var file = "./classDetails.txt";
+	var file = "./courseDetails.txt";
 	var details = "subject=" + getData['subject'] + " classID="+getData['classID']+" section="+getData['section'];
 	var bucket = 'ke_bucket';
 	var S3_Info = '';
@@ -207,17 +208,14 @@ function fileUpload(getData, response) {
 	var params = {
   		Bucket: bucket,
 	};
-	console.log("listObjects");
 	s3.listObjects(params, function(err, data) {
   		if (err) console.log(err, err.stack);
   		else     fileCounter = data.Contents.length;	
 		fileCounter++;
-		var currentFile = "classDetails" + String(fileCounter) + ".txt";
+		var currentFile = "courseDetails" + String(fileCounter) + ".txt";
 		fs.writeFile(file, details,function(err){
-			if(err) {
-				throw err;
-			}
-			var file2 = "./classDetails.txt";
+			if(err){throw err;}
+			var file2 = "./courseDetails.txt";
 			fs.readFile(file2, function(err, data) {
 				if(err) {
 					throw err;
@@ -227,17 +225,14 @@ function fileUpload(getData, response) {
   					Key: currentFile,
   					Body: data,
 				}
-				console.log("putObject");
 				s3.putObject(params, function(err, data) {
   					if (err) console.log(err, err.stack);
-  					console.log("in putObject");
   					S3_Info += '<h1>S3 Information</h1>' +
 					'<p>File: ' + currentFile + ' put into Bucket: ' + bucket + '</p>';
 					S3_Info += '<p>Bucket: ' + bucket + ' currently contains ';			      
   					var params = {
       				Bucket: bucket,
   					};
-  					console.log("listObjects");
   					s3.listObjects(params, function(err, data) {
     					if (err) console.log(err, err.stack);
     					else {
@@ -246,13 +241,11 @@ function fileUpload(getData, response) {
       						}   
     					}
     					S3_Info += '</p><p>Bucket: ' + bucket + ' is owned by ';
-    					console.log("getBucketAcl");
     					s3.getBucketAcl(params, function(err, data) {
       						if (err) console.log(err, err.stack);
       						else {
         						S3_Info += data.Owner.DisplayName + ' with permissions: ' + data.Grants[0].Permission + '</p>';
         					}
-        					console.log(S3_Info);
       						var headers = {};
   							headers["Content-Type"] = "text/html";
   							headers["Access-Control-Allow-Origin"] = "*";
@@ -270,5 +263,5 @@ function fileUpload(getData, response) {
 exports.fileUpload = fileUpload;
 exports.onLoading = onLoading;
 exports.subjectExpand = subjectExpand;
-exports.classExpand = classExpand;
+exports.courseExpand = courseExpand;
 exports.sectionExpand = sectionExpand;

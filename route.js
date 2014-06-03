@@ -11,7 +11,7 @@ function route(handle, pathname, getData, response)
 					+'</script></head>'
 					+'<body onload="onLoading()">'
 					+'<div id = "subjectList">testing this subject</div>'
-					+'<div id = "classList">testing this class</div>'
+					+'<div id = "courseList">testing this class</div>'
 					+'<div id = "sectionList">testing this section</div>'
 					+'<div id = "detailsList">testing these details</div>'
 					+'</body>'

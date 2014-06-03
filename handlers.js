@@ -213,13 +213,13 @@ function sectionExpand(getData, response)
 		});
 	}
 
-	//mongo
+	//mongo section details table
 	else if (getData['databaseType'] == 3) {
 		var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",
-    	db = mongojs.connect(uri, ["classDB"]),
-    	table = "";
+    		db = mongojs.connect(uri, ["collection"]),
+    		table = "";
 
-		db.classDB.find({subject:getData["subject"], classID:getData["courseID"], section:getData["section"]}, function(err, docs) {
+		db.collection.find({subject:getData["subject"], courseID:getData["courseID"], section:getData["section"]}, function(err, docs) {
 			table += '<table border="1" style="width:500px">'+
 						'<tr>'+
   							'<td>Slots open</td>'+
@@ -242,7 +242,7 @@ function sectionExpand(getData, response)
 			var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
-    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('sectionL').value";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
@@ -251,12 +251,13 @@ function sectionExpand(getData, response)
 	}
 }
 
+//called when user presses "Upload a file" button
+//nested in order to run synchronously
 function fileUpload(getData, response) {
-	console.log("in fileUpload");
 	AWS.config.loadFromPath('./config.json');
 	var s3 = new AWS.S3();
 	var file = "./courseDetails.txt";
-	var details = "subject=" + getData['subject'] + " classID="+getData['classID']+" section="+getData['section'];
+	var details = "subject=" + getData['subject'] + " courseID="+getData['courseID']+" section="+getData['section'];
 	var bucket = 'ke_bucket';
 	var S3_Info = '';
 
@@ -264,14 +265,17 @@ function fileUpload(getData, response) {
 	var params = {
   		Bucket: bucket,
 	};
+	//get correct number of file to upload
 	s3.listObjects(params, function(err, data) {
   		if (err) console.log(err, err.stack);
   		else     fileCounter = data.Contents.length;	
 		fileCounter++;
 		var currentFile = "courseDetails" + String(fileCounter) + ".txt";
+		//write file to server
 		fs.writeFile(file, details,function(err){
 			if(err){throw err;}
 			var file2 = "./courseDetails.txt";
+			//read file again and put the data into S3 params
 			fs.readFile(file2, function(err, data) {
 				if(err) {
 					throw err;
@@ -281,14 +285,17 @@ function fileUpload(getData, response) {
   					Key: currentFile,
   					Body: data,
 				}
+				//Add object to S3 with the given params
 				s3.putObject(params, function(err, data) {
   					if (err) console.log(err, err.stack);
+  					//beginning building html
   					S3_Info += '<h1>S3 Information</h1>' +
 					'<p>File: ' + currentFile + ' put into Bucket: ' + bucket + '</p>';
 					S3_Info += '<p>Bucket: ' + bucket + ' currently contains ';			      
   					var params = {
       				Bucket: bucket,
   					};
+  					//list objects in bucket, add to html
   					s3.listObjects(params, function(err, data) {
     					if (err) console.log(err, err.stack);
     					else {
@@ -296,6 +303,7 @@ function fileUpload(getData, response) {
         						S3_Info += String(data.Contents[i].Key) + ', ';
       						}   
     					}
+    					//get access control policy on current bucket, add to html
     					S3_Info += '</p><p>Bucket: ' + bucket + ' is owned by ';
     					s3.getBucketAcl(params, function(err, data) {
       						if (err) console.log(err, err.stack);

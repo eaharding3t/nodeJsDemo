@@ -197,6 +197,7 @@ function sectionExpand(getData, response)
 }
 
 function fileUpload(getData, response) {
+	console.log("in fileUpload");
 	AWS.config.loadFromPath('./config.json');
 	var s3 = new AWS.S3();
 	var file = "./courseDetails.txt";

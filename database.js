@@ -181,42 +181,30 @@ function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 		else if (databaseType == 3)
 		{
 			var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",
-    			db = mongojs.connect(uri, ["classDB"]);
+    			db = mongojs.connect(uri, ["subject", "courseID", "section"]);
 
 			if(functionCalledFrom.length == 1) {
-				db.classDB.find().sort({subject:''}, function(err, docs) {
-					var last = "";
-					var next = "";
+				db.subject.find({}, function(err, docs) {
 					for (var i=0; i<docs.length; i++) {
-    					next = docs[i]["subject"];
-						if (next != last) {
-							htmlString += '<option value="' + docs[i]["subject"] + '">' + String(docs[i]["subject"]) + "</option>";	
-						}
-						last = next;
-    				}
+						htmlString += '<option value="' + docs[i]["subjectID"] + '">' + docs[i]["subjectName"] + "</option>";					
+   					}
     				callback(htmlString);
 				});
 			}
 
 			if(functionCalledFrom.length == 2) {
-				db.classDB.find({subject:getData[functionCalledFrom[1]]}).sort({classID:''}, function(err, docs) {
-					var last = "";
-					var next = ""; 
+				db.courseID.find({subjectID:getData[functionCalledFrom[1]]}, function(err, docs) {
     				for (var i=0; i<docs.length; i++) {
-    					next = docs[i]["classID"];
-    					if (next != last) {
-    						htmlString += '<option value="' + docs[i]["classID"] + '">' + String(docs[i]["classID"]) + "</option>";
-    					}
-    					last = next;
+    					htmlString += '<option value="' + docs[i]["courseID"] + '">' + docs[i]["courseName"] + "</option>";
     				}
     				callback(htmlString);
 				});
 			}
 
 			if(functionCalledFrom.length == 3) {
-				db.classDB.find({classID:getData[functionCalledFrom[1]], subject:getData[functionCalledFrom[2]]}, function(err, docs) {    
+				db.section.find({courseID:getData[functionCalledFrom[1]], subjectID:getData[functionCalledFrom[2]]}, function(err, docs) {    
     				for (var i=0; i<docs.length; i++) {
-    					htmlString += '<option value="' + docs[i]["section"] + '">' + String(docs[i]["section"]) + "</option>";
+    					htmlString += '<option value="' + docs[i]["sectionID"] + '">' + String(docs[i]["sectionName"]) + "</option>";
     				}
     				callback(htmlString);
 				});

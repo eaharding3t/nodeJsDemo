@@ -1,4 +1,4 @@
-//Called from the server when a request is recieved. Calls the correct handler. If no handler is present it returns the start page.
+//Called from the server when a request is recieved. Calls the correct handler. If no handler is present it returns the base page.
 function route(handle, pathname, getData, response)
 {
 	if (typeof handle[pathname] === 'function') {

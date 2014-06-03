@@ -1,5 +1,6 @@
 function hardCoded(getData, htmlString, functionCalledFrom, callback)
 {
+	//Generate the database to perform "queries" on
 	var redun = [];
 	var rows = [];
 	rows[0] = {'subject':'math','courseID':'algebra','section':'001','time':130,'room':'001',
@@ -18,6 +19,7 @@ function hardCoded(getData, htmlString, functionCalledFrom, callback)
 		'room': '305','waitList':20,'slotsTotal':60,'slotsOpen':12,'teacher': 'computerEngineeringTeacher'};
 	rows[7]={'subject':'electrical','courseID':'wiring','section':'436','time':235,
 		'room': '325','waitList':10,'slotsTotal':60,'slotsOpen':12,'teacher': 'electricalTeacher'};
+		//Loop until you find the position of the desired table element and then add it as an option
 	for (var i=0; i < rows.length; i++) {
 		var select = true;
 		for(var k = 1; k<functionCalledFrom.length;k++)

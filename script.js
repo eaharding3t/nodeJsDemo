@@ -10,7 +10,7 @@ function onLoading(){
 	}
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("subjectList").innerHTML = xmlHttp.responseText;
-		document.getElementById("classList").innerHTML = "";
+		document.getElementById("courseList").innerHTML = "";
 		document.getElementById("sectionList").innerHTML ="";
 		document.getElementById("detailsList").innerHTML = "";
 	};
@@ -29,13 +29,13 @@ function subjectExpand(sub){
 	}
 	document.getElementById("subjectL").value = sub;
 	xmlHttp.onreadystatechange=function(){
-		document.getElementById("classList").innerHTML = xmlHttp.responseText;
+		document.getElementById("courseList").innerHTML = xmlHttp.responseText;
 	};
 	var url = "http://localhost:1337/subjectExpand?subject=" +sub+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
-function classExpand(classID, sub){
+function courseExpand(courseID, sub){
 	var xmlHttp = new XMLHttpRequest();
 	var databaseType = 3;
 	for(var i = 0; i < 4; i ++)
@@ -45,15 +45,15 @@ function classExpand(classID, sub){
 			databaseType =i;
 		}
 	}
-	document.getElementById("classL").value = classID;
+	document.getElementById("courseL").value = courseID;
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("sectionList").innerHTML = xmlHttp.responseText;
 	};
-	var url = "http://localhost:1337/classExpand?subject="+sub+"&classID="+classID+"&databaseType="+databaseType;
+	var url = "http://localhost:1337/courseExpand?subject="+sub+"&courseID="+courseID+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
-function sectionExpand(sub, classID, sec){
+function sectionExpand(sub, courseID, sec){
 	var xmlHttp = new XMLHttpRequest();
 	var databaseType =3;
 	for(var i =0;i<4;i++)
@@ -66,14 +66,14 @@ function sectionExpand(sub, classID, sec){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("detailsList").innerHTML = xmlHttp.responseText;
 	};
-	var url = "http://localhost:1337/sectionExpand?subject="+sub+"&classID="+classID+"&section="+sec+"&databaseType="+databaseType;
+	var url = "http://localhost:1337/sectionExpand?subject="+sub+"&courseID="+courseID+"&section="+sec+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
-function fileUpload(subj ,classID, sect){var xmlHttp = new XMLHttpRequest();
+function fileUpload(subj ,courseID, sect){var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
 	};
-	var url = "http://localhost:1337/fileUpload?subject="+subj+"&classID="+classID+"&section="+sect;
+	var url = "http://localhost:1337/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }

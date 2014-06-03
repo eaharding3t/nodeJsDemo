@@ -24,9 +24,9 @@ function subjectExpand(getData, response)
 {
 	var temp = "document.getElementById('subjectL').value";
 	var list = '<form action="">'+ 
-  		'<select id="classL" onchange="classExpand(this.value,'+temp+') ">'+
-  		'<option value="">Select a classID</option>';
-	database.queryDB(getData, list, getData['databaseType'], ['classID','subject'])(function(htmlString){
+  		'<select id="courseL" onchange="courseExpand(this.value,'+temp+') ">'+
+  		'<option value="">Select a courseID</option>';
+	database.queryDB(getData, list, getData['databaseType'], ['courseID','subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {}
   		headers["Content-Type"] = "text/html";
@@ -36,14 +36,14 @@ function subjectExpand(getData, response)
 		response.end();
 	}, function(errback){throw errback;});
 }
-//Called when a user first selects a class
-function classExpand(getData, response)
+//Called when a user first selects a course
+function courseExpand(getData, response)
 {
-	var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value";
+	var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
 	var list = '<form action="">'+ 
   		'<select id="sectionL" onchange="sectionExpand('+temp+',this.value)">'+
   		'<option value="">Select a section</option>';
-  		var help = ['section','classID','subject'];
+  		var help = ['section','courseID','subject'];
   		console.log(help[0]);
 	database.queryDB(getData, list, getData['databaseType'], help)(function(htmlString){
 		htmlString+='</select>'+'</form>';
@@ -65,8 +65,8 @@ function sectionExpand(getData, response)
 				user : 'root',
 				password: 'password123$'
 			});
-		connection.query('Select room, time, waitList, slotsTotal, slotsOpen, teacher from subjectTable, classIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.classID = classIDTable.classID) AND (sectionName = ?) AND (className = ?) AND (subjectName = ?)',
-	 	[getData["subject"], getData["classID"], getData["section"]],
+		connection.query('Select room, time, waitList, slotsTotal, slotsOpen, teacher from subjectTable, courseIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.courseID = courseIDTable.courseID) AND (sectionName = ?) AND (courseName = ?) AND (subjectName = ?)',
+	 	[getData["subject"], getData["courseID"], getData["section"]],
 	 	function(error, rows, feilds){
 	 		if(error)
 	 		{
@@ -95,7 +95,7 @@ function sectionExpand(getData, response)
 	 		var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
-    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('sectionL').value";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 	    	response.writeHead(200, headers);
 	 		response.write(table);
@@ -150,7 +150,7 @@ function sectionExpand(getData, response)
 			var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
-    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('subjectL')";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('subjectL')";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
@@ -164,7 +164,7 @@ function sectionExpand(getData, response)
     	db = mongojs.connect(uri, ["classDB"]),
     	table = "";
 
-		db.classDB.find({subject:getData["subject"], classID:getData["classID"], section:getData["section"]}, function(err, docs) {
+		db.classDB.find({subject:getData["subject"], classID:getData["courseID"], section:getData["section"]}, function(err, docs) {
 			table += '<table border="1" style="width:500px">'+
 						'<tr>'+
   							'<td>Slots open</td>'+
@@ -198,11 +198,11 @@ function sectionExpand(getData, response)
 function fileUpload(getData, response) {
 	AWS.config.loadFromPath('./config.json');
 	var s3 = new AWS.S3();
-	var file = "./classDetails.txt";
-	var details = "subject=" + getData['subject'] + "classID="+getData['classID']+"section="+getData['section'];
+	var file = "./courseDetails.txt";
+	var details = "subject=" + getData['subject'] + "courseID="+getData['courseID']+"section="+getData['section'];
 	fs.writeFile(file, details,function(err){
 		if(err){throw err;}
-		var file2 = "./classDetails.txt";
+		var file2 = "./courseDetails.txt";
 		console.log("test");
 		fs.readFile(file2, function(err, data) {
 			if(err) {throw err;}
@@ -223,5 +223,5 @@ function fileUpload(getData, response) {
 exports.fileUpload = fileUpload;
 exports.onLoading = onLoading;
 exports.subjectExpand = subjectExpand;
-exports.classExpand = classExpand;
+exports.courseExpand = courseExpand;
 exports.sectionExpand = sectionExpand;

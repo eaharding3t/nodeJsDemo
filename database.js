@@ -60,11 +60,11 @@ function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 			}
 			else if(functionCalledFrom.length == 2)
 			{
-				queryString = 'Select className from subjectTable, classIDTable WHERE (classIDTable.subjectID = subjectTable.subjectID) AND (subjectTable.subjectName = '+getData['subject']+')';
+				queryString = 'Select courseName from subjectTable, courseIDTable WHERE (courseIDTable.subjectID = subjectTable.subjectID) AND (subjectTable.subjectName = '+getData['subject']+')';
 			}
 			else if(functionCalledFrom.length == 3)
 			{
-				queryString = 'Select sectionName from subjectTable, classIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.classID = classIDTable.classID) AND (subjectTable.subjectName = '+getData['subject']+') AND (classIDTable.className = '+getData['classID']+')';		
+				queryString = 'Select sectionName from subjectTable, courseIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.courseID = courseIDTable.courseID) AND (subjectTable.subjectName = '+getData['subject']+') AND (courseIDTable.courseName = '+getData['courseID']+')';		
 			}
 			//For different servers change connection data
 			var connection = mysql.createConnection({
@@ -88,6 +88,7 @@ function queryDB(getData, htmlString, databaseType, functionCalledFrom)
   				callback(htmlString);
 			});
 		}
+		//Dynamodb for different database change the config.json file
 		else if(databaseType == 2)
 		{
 			var redun = [];
@@ -176,6 +177,7 @@ function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 				});
 			}
 		}
+		//MongoDB
 		else if (databaseType == 3)
 		{
 			var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",

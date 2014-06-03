@@ -6,7 +6,7 @@ var handle = {};
 //These handles to functions allow the node server to tell when it hits a valid (handled) route
 handle['/onLoading'] = handlers.onLoading;
 handle['/subjectExpand'] = handlers.subjectExpand;
-handle['/classExpand'] = handlers.classExpand;
+handle['/courseExpand'] = handlers.courseExpand;
 handle['/sectionExpand'] = handlers.sectionExpand;
 handle['/fileUpload'] = handlers.fileUpload;
 server.start(handle, router.route);

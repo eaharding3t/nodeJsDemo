@@ -11,7 +11,7 @@ function onLoading(getData, response)
      	'<option value="">Select a subject</option>';
 	database.queryDB(getData, test, getData['databaseType'], ['subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
-  		var headers = {}
+  		var headers = {};
   		headers["Content-Type"] = "text/html";
   		headers["Access-Control-Allow-Origin"] = "*";
 		response.writeHead(200, headers);
@@ -28,7 +28,7 @@ function subjectExpand(getData, response)
   		'<option value="">Select a courseID</option>';
 	database.queryDB(getData, list, getData['databaseType'], ['courseID','subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
-  		var headers = {}
+  		var headers = {};
   		headers["Content-Type"] = "text/html";
   		headers["Access-Control-Allow-Origin"] = "*";
 		response.writeHead(200, headers);
@@ -47,7 +47,7 @@ function courseExpand(getData, response)
   		console.log(help[0]);
 	database.queryDB(getData, list, getData['databaseType'], help)(function(htmlString){
 		htmlString+='</select>'+'</form>';
-  		var headers = {}
+  		var headers = {};
   		headers["Content-Type"] = "text/html";
   		headers["Access-Control-Allow-Origin"] = "*";
 		response.writeHead(200, headers);
@@ -242,7 +242,8 @@ function sectionExpand(getData, response)
 			var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
-    		table+='<br><div id = "fileUpload"><button onclick = "fileUpload()">Upload a file</button></div>';
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('sectionL').value";
+    		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
 			response.end();
@@ -254,25 +255,64 @@ function fileUpload(getData, response) {
 	AWS.config.loadFromPath('./config.json');
 	var s3 = new AWS.S3();
 	var file = "./courseDetails.txt";
-	var details = "subject=" + getData['subject'] + "courseID="+getData['courseID']+"section="+getData['section'];
-	fs.writeFile(file, details,function(err){
-		if(err){throw err;}
-		var file2 = "./courseDetails.txt";
-		console.log("test");
-		fs.readFile(file2, function(err, data) {
-			if(err) {throw err;}
-			console.log(data);
-			var params = {
-  				Bucket: 'ke_bucket', // required
-  				Key: 'ke_key', // required
-  				Body: data,
-			}
-			s3.putObject(params, function(err, data) {
-  				if (err) console.log(err, err.stack);
-  				else     console.log(data);           
+	var details = "subject=" + getData['subject'] + " classID="+getData['classID']+" section="+getData['section'];
+	var bucket = 'ke_bucket';
+	var S3_Info = '';
+
+	var fileCounter;
+	var params = {
+  		Bucket: bucket,
+	};
+	s3.listObjects(params, function(err, data) {
+  		if (err) console.log(err, err.stack);
+  		else     fileCounter = data.Contents.length;	
+		fileCounter++;
+		var currentFile = "courseDetails" + String(fileCounter) + ".txt";
+		fs.writeFile(file, details,function(err){
+			if(err){throw err;}
+			var file2 = "./courseDetails.txt";
+			fs.readFile(file2, function(err, data) {
+				if(err) {
+					throw err;
+				}
+				var params = {
+  					Bucket: bucket,
+  					Key: currentFile,
+  					Body: data,
+				}
+				s3.putObject(params, function(err, data) {
+  					if (err) console.log(err, err.stack);
+  					S3_Info += '<h1>S3 Information</h1>' +
+					'<p>File: ' + currentFile + ' put into Bucket: ' + bucket + '</p>';
+					S3_Info += '<p>Bucket: ' + bucket + ' currently contains ';			      
+  					var params = {
+      				Bucket: bucket,
+  					};
+  					s3.listObjects(params, function(err, data) {
+    					if (err) console.log(err, err.stack);
+    					else {
+      						for (var i=0; i<data.Contents.length; i++) {
+        						S3_Info += String(data.Contents[i].Key) + ', ';
+      						}   
+    					}
+    					S3_Info += '</p><p>Bucket: ' + bucket + ' is owned by ';
+    					s3.getBucketAcl(params, function(err, data) {
+      						if (err) console.log(err, err.stack);
+      						else {
+        						S3_Info += data.Owner.DisplayName + ' with permissions: ' + data.Grants[0].Permission + '</p>';
+        					}
+      						var headers = {};
+  							headers["Content-Type"] = "text/html";
+  							headers["Access-Control-Allow-Origin"] = "*";
+							response.writeHead(200, headers);
+							response.write(S3_Info);
+							response.end();
+    					});
+  					});	           
+				});
 			});
 		});
-	});
+	});	
 }
 
 exports.fileUpload = fileUpload;

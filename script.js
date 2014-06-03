@@ -72,6 +72,7 @@ function sectionExpand(sub, courseID, sec){
 }
 function fileUpload(subj ,courseID, sect){var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
+		document.getElementById("fileUpload").innerHTML = xmlHttp.responseText;
 	};
 	var url = "http://localhost:1337/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
 	xmlHttp.open("GET", url, true);

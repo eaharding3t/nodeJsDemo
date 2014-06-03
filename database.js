@@ -1,7 +1,7 @@
 var mongojs = require("mongojs");
 var hardCoded = require("./hardCoded");
 var mySqlQuery = require("./mySqlQuery");
-var awsQuery = require("./awsQuery");
+var dynamoQuery = require("./dynamoQuery");
 function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 {
 	return function(callback, errback){
@@ -17,7 +17,7 @@ function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 		//Dynamodb for different database change the config.json file
 		else if(databaseType == 2)
 		{
-			awsQuery.awsQuery(getData, htmlString, functionCalledFrom, callback);
+			dynamoQuery.dynamoQuery(getData, htmlString, functionCalledFrom, callback);
 		}
 		//MongoDB
 		else if (databaseType == 3)

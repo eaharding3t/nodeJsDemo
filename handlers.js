@@ -3,12 +3,14 @@ var database = require("./database");
 var mongojs = require("mongojs");
 var AWS = require("aws-sdk");
 var fs = require("fs");
-// Called on page load to populate subject list
+// Called on database selection to populate subject list
 function onLoading(getData, response)
 {
+	//generates base form html so that the database query can add options
 	var test = '<form action="">'+ 
      	'<select id="subjectL" onchange="subjectExpand(this.value)">'+
      	'<option value="">Select a subject</option>';
+    //Funtion returns a function that generates the html for the options of the select box
 	database.queryDB(getData, test, getData['databaseType'], ['subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {};
@@ -22,10 +24,12 @@ function onLoading(getData, response)
 //Called when the user first selects a subject
 function subjectExpand(getData, response)
 {
+	//generates base form html so that the database query can add options
 	var temp = "document.getElementById('subjectL').value";
 	var list = '<form action="">'+ 
   		'<select id="courseL" onchange="courseExpand(this.value,'+temp+') ">'+
   		'<option value="">Select a courseID</option>';
+  	//Funtion returns a function that generates the html for the options of the select box
 	database.queryDB(getData, list, getData['databaseType'], ['courseID','subject'])(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {};
@@ -39,12 +43,14 @@ function subjectExpand(getData, response)
 //Called when a user first selects a course
 function courseExpand(getData, response)
 {
+	//generates base form html so that the database query can add options
 	var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
 	var list = '<form action="">'+ 
   		'<select id="sectionL" onchange="sectionExpand('+temp+',this.value)">'+
   		'<option value="">Select a section</option>';
   		var help = ['section','courseID','subject'];
   		console.log(help[0]);
+  	//Funtion returns a function that generates the html for the options of the select box
 	database.queryDB(getData, list, getData['databaseType'], help)(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {};
@@ -58,6 +64,7 @@ function courseExpand(getData, response)
 //Called when a user first selects a section
 function sectionExpand(getData, response)
 {
+	//Generates the details table based on the type of database selected
 	if(getData['databaseType'] == 0)
 	{
 		var locate = 0;
@@ -167,7 +174,7 @@ function sectionExpand(getData, response)
 			KeyConditions: {
 				"classID":
 				{
-					"AttributeValueList": [{"S" : getData['classID']}],
+					"AttributeValueList": [{"S" : getData['courseID']}],
 					ComparisonOperator: 'EQ'
 				}
 			}
@@ -242,7 +249,7 @@ function sectionExpand(getData, response)
 			var headers = {};
   			headers["Content-Type"] = "text/html";
     		headers["Access-Control-Allow-Origin"] = "*";
-    		var temp = "document.getElementById('subjectL').value, document.getElementById('classL').value, document.getElementById('sectionL').value";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);

@@ -58,6 +58,61 @@ function courseExpand(getData, response)
 //Called when a user first selects a section
 function sectionExpand(getData, response)
 {
+	if(getData['databaseType'] == 0)
+	{
+		var locate = 0;
+		var rows = [];
+		rows[0] = {subject:'math',courseID:'algebra',section:'001',time:130,room:'001',
+			waitList:0,slotsTotal:50,slotsOpen:25,teacher: 'mathTeacher'};
+		rows[1]={'subject':'math','courseID':'linear','section':'500','time':730,
+			'room': '320','waitList':5,'slotsTotal':60,'slotsOpen':0,'teacher': 'Jim'};
+		rows[2]={'subject':'math','courseID':'calculus','section':'201','time':730,
+			'room': '320','waitList':5,'slotsTotal':60,'slotsOpen':0,'teacher': 'Bob'};
+		rows[3]={'subject':'math','courseID':'geometry','section':'101','time':830,
+			'room': '320','waitList':5,'slotsTotal':60,'slotsOpen':0,'teacher': 'John'};
+		rows[4]={'subject':'english','courseID':'modern lit','section':'400','time':1230,
+			'room': '301','waitList':0,'slotsTotal':60,'slotsOpen':15,'teacher': 'englishTeacher'};
+		rows[5] = {'subject':'computerScience','courseID':'data structures','section':'430','time':530,
+			'room': '305','waitList':20,'slotsTotal':60,'slotsOpen':0,'teacher': 'computerScienceTeacher'};
+		rows[6]={'subject':'computerEngineering','courseID':'data','section':'432','time':230,
+			'room': '305','waitList':20,'slotsTotal':60,'slotsOpen':12,'teacher': 'computerEngineeringTeacher'};
+		rows[7]={'subject':'electrical','courseID':'wiring','section':'436','time':235,
+				'room': '325','waitList':10,'slotsTotal':60,'slotsOpen':12,'teacher': 'electricalTeacher'};
+		for(var i = 0; i < rows.length; i++)
+		{
+			if(rows[i]['subject'] == getData['subject'] && rows[i]['courseID'] == getData['courseID'] && rows[i]['section'] == getData['section'])
+			{
+				locate = i;
+			}
+		}
+		var table = '<table border="1" style="width:500px">'+
+				'<tr>'+
+  					'<td>Slots open</td>'+
+  					'<td>Slots total</td>'+		
+  					'<td>Teacher</td>'+
+  					'<td>Time</td>'+
+  					'<td>Room</td>'+
+  					'<td>Waitlist</td>'+
+				'</tr>'+
+				'<tr>'+
+					'<td>' + String(rows[locate]['slotsOpen']) + '</td>'+
+					'<td>' + String(rows[locate]['slotsTotal']) + '</td>'+
+					'<td>' + String(rows[locate]['teacher']) + '</td>'+
+					'<td>' + String(rows[locate]['time']) + '</td>'+
+					'<td>' + String(rows[locate]['room']) + '</td>'+
+					'<td>' + String(rows[locate]['waitList']) + '</td>'+
+		 		'</tr>'+
+				'</table>';
+
+	 		var headers = {};
+  			headers["Content-Type"] = "text/html";
+    		headers["Access-Control-Allow-Origin"] = "*";
+    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
+    		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+	    	response.writeHead(200, headers);
+	 		response.write(table);
+	 		response.end();
+	}
 	if (getData['databaseType'] == 1) {
 		var connection = mysql.createConnection({
 				host : '127.0.0.1',

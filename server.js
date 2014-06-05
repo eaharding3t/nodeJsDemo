@@ -12,7 +12,21 @@ function start(handle, route)
 		var getData = "";
 		var pathname = url.parse(request.url).pathname;
 		getData = url.parse(request.url, true).query;
-		route(handle ,pathname, getData, response);
+		if(getData['loadTest'])
+		{
+			var connection = mysql.createConnection({
+				host : "",
+				database: "",
+				user: "",
+				password: ""
+			});
+			connection.query("Select * from course",function(error,rows,feilds){
+				route(handle, pathname, getData, response);
+			});
+		}
+		else{
+			route(handle ,pathname, getData, response);
+		}
 		
 	}
 	http.createServer(onRequest).listen(1337,'localhost');

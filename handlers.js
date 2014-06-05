@@ -169,12 +169,12 @@ function sectionExpand(getData, response)
 		var db = new AWS.DynamoDB();
 		var table ="";
 		var params = {
-			TableName:'classTable',
-			IndexName: "classID"+"-index",
+			TableName:'course',
+			IndexName: "section"+"-index",
 			KeyConditions: {
-				"classID":
+				"section":
 				{
-					"AttributeValueList": [{"S" : getData['courseID']}],
+					"AttributeValueList": [{"S" : getData['section']}],
 					ComparisonOperator: 'EQ'
 				}
 			}
@@ -183,13 +183,13 @@ function sectionExpand(getData, response)
 			var locate = 0;
 			for(var i =0;i<data['Items'].length;i++)
 			{
-				if(getData['section']==data['Items'][i]['section']['S'])
+				if(getData['course']==data['Items'][i]['course']['S'] && getData['subject']==data['Items'][i]['subject']['S'])
 				{
 					locate = i;
 					break;
 				}
 			}
-			console.log(data['Items']);
+			//console.log(data['Items']);
 			table += '<table border="1" style="width:500px">'+
 						'<tr>'+
   							'<td>Slots open</td>'+
@@ -203,7 +203,7 @@ function sectionExpand(getData, response)
 							'<td>' + String(data['Items'][locate]['slotsOpen']['N']) + '</td>'+
 							'<td>' + String(data['Items'][locate]["slotsTotal"]['N']) + '</td>'+
 							'<td>' + String(data['Items'][locate]["teacher"]['S']) + '</td>'+
-							'<td>' + String(data['Items'][locate]["time"]['N']) + '</td>'+
+							'<td>' + String(data['Items'][locate]["time"]['S']) + '</td>'+
 							'<td>' + String(data['Items'][locate]["room"]['S']) + '</td>'+
 							'<td>' + String(data['Items'][locate]["waitList"]['N']) + '</td>'+
 		 				'</tr>'+

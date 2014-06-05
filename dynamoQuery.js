@@ -10,19 +10,15 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 		//Generate paramaters for the scan equivelent sql statment is
 		// SELECT subject FROM classTable
 		var params = {
-			TableName: 'classTable',
+			TableName: 'subject',
 			AttributesToGet: [functionCalledFrom[0]],
 		}
 		db.scan(params, function(err,data){
 			if(err){throw err;}
 			else{
 				for (var i=0; i < data['Items'].length; i++) {
-  					if(redun.indexOf(data['Items'][i]['subject']['S']) == -1)
-  					{
    						htmlString += '<option value="'+data['Items'][i]['subject']['S']+'">' 
    						+ String(data['Items'][i]['subject']['S']) + "</option>";
-   						redun.push(data['Items'][i]['subject']['S']);
-   					}
   				}
   				callback(htmlString);
 			}
@@ -34,9 +30,9 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 		//Generate paramaters for the query. Equivelent sql statment is
 		// SELECT classID FROM classTable WHERE subject = getData['subject']
 		var params = {
-			TableName:'classTable',
+			TableName:'course',
 			IndexName: 'subject'+"-index",
-			AttributesToGet: ['classID'],
+			AttributesToGet: ['course'],
 			KeyConditions: {
 				"subject":
 				{
@@ -49,10 +45,10 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 			if(err){throw err;}
 			else{
 				for (var i=0; i < data['Items'].length; i++) {
-  					if(redun.indexOf(data['Items'][i]['classID']['S']) == -1)
+  					if(redun.indexOf(data['Items'][i]['course']['S']) == -1)
   					{
-   						htmlString += '<option value="'+data['Items'][i]['classID']['S']+'">' + String(data['Items'][i]['classID']['S']) + "</option>";
-   						redun.push(data['Items'][i]['classID']['S']);
+   						htmlString += '<option value="'+data['Items'][i]['course']['S']+'">' + String(data['Items'][i]['course']['S']) + "</option>";
+   						redun.push(data['Items'][i]['course']['S']);
    					}
   				}
   				callback(htmlString);
@@ -62,13 +58,13 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 	//Select all sections with a courseID matching the above select box
 	else if(functionCalledFrom[0] == 'section'){
 		//Generate paramaters for the query. Equivelent sql statment is
-		// SELECT section FROM classTable WHERE classID = getData['classID']
+		// SELECT section FROM classTable WHERE course = getData['course']
 		var params = {
-			TableName:'classTable',
-			IndexName: "classID"+"-index",
+			TableName:'course',
+			IndexName: "course"+"-index",
 			AttributesToGet: ["section"],
 			KeyConditions: {
-				"classID":
+				"course":
 				{
 					"AttributeValueList": [{"S" : getData['courseID']}],
 					ComparisonOperator: 'EQ'

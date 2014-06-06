@@ -331,8 +331,23 @@ function fileUpload(getData, response) {
 	});	
 }
 
+function loadTest(getData, response) {
+	if(getData['loadTest'])
+		{
+			var connection = mysql.createConnection({
+				host : "ec2-54-85-7-38.compute-1.amazonaws.com",
+				database: "mydb",
+				user: "root",
+				password: "password"
+			});
+			connection.query("select * from Subjects, Courses where Courses.SubjectID = Subjects.ID",function(error,rows,feilds){
+			});
+		}
+}
+
 exports.fileUpload = fileUpload;
 exports.onLoading = onLoading;
 exports.subjectExpand = subjectExpand;
 exports.courseExpand = courseExpand;
 exports.sectionExpand = sectionExpand;
+exports.loadTest = loadTest;

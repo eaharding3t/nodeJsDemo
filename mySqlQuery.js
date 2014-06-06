@@ -43,5 +43,5 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
   	});
 	}
 }
-}
+
 exports.mySqlQuery = mySqlQuery;

@@ -5,7 +5,7 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	console.log("test2");
 	if(functionCalledFrom.length == 1)
 	{
-		queryString = 'Select Name from subjectTable';
+		queryString = 'Select Name from Subjects';
 	}
 	else if(functionCalledFrom.length == 2)
 	{

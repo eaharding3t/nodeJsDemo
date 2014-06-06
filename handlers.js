@@ -341,7 +341,17 @@ function loadTest(getData, response) {
 				password: "password"
 			});
 			connection.query("select * from Subjects, Courses where Courses.SubjectID = Subjects.ID",function(error,rows,feilds){
-				console.log("LOAD TEST");
+				var loadTestList = "<p>";
+				for (var i = 0: i < rows.length; i++){
+					loadTestList += rows[i];
+				}
+				loadTestList += "</p>";
+				var headers = {};
+  				headers["Content-Type"] = "text/html";
+  				headers["Access-Control-Allow-Origin"] = "*";
+				response.writeHead(200, headers);
+				response.write(loadTestList);
+				response.end();
 			});
 		}
 }

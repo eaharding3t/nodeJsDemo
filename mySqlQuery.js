@@ -26,7 +26,8 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 		host : 'ec2-54-85-7-38.compute-1.amazonaws.com',
 		database: 'mydb',
 		user : 'root',
-		password: 'password'
+		password: 'password',
+		port: '1337'
 	});
 	//Execute the selected query and build html options to return to the callback function
 	if(functionCalledFrom.length != 3)

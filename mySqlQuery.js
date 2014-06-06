@@ -5,17 +5,17 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	console.log("test2");
 	if(functionCalledFrom.length == 1)
 	{
-		queryString = 'Select Name from Subjects';
+		queryString = 'Select Name AS subject from Subjects LIMIT 100';
 	}
 	else if(functionCalledFrom.length == 2)
 	{
-		queryString = 'Select Name from Subjects, Courses'
+		queryString = 'Select Courses.Name as courseID from Subjects, Courses'
 		+ ' WHERE (Courses.SubjectID = Subjects.ID)'
-		+ ' AND (Subjects.Name = '+getData['subject']+')';
+		+ ' AND (Subjects.Name = "'+getData['subject']+'")';
 	}
 	else if(functionCalledFrom.length == 3)
 	{
-		queryString = 'Select sectionName from subjectTable, Courses, sectionTable'
+		queryString = 'iasdSelect sectionName from subjectTable, Courses, sectionTable'
 		+' WHERE (sectionTable.subjectID = subjectTable.subjectID)'
 		+' AND (sectionTable.courseID = Courses.courseID)'
 		+' AND (subjectTable.subjectName = '+getData['subject']+')'
@@ -25,9 +25,8 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	var connection = mysql.createConnection({
 		host : 'ec2-54-85-7-38.compute-1.amazonaws.com',
 		database: 'mydb',
-		user : 'root',
-		password: 'password',
-		port: '1337'
+		user : 'testuser',
+		password: 'password123'
 	});
 	//Execute the selected query and build html options to return to the callback function
 	if(functionCalledFrom.length != 3)

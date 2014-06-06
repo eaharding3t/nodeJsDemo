@@ -1,4 +1,5 @@
 //All of these requires allow the functions that are written in different files to be passed between files
+require('newrelic');
 var server = require("./server");
 var router = require("./route");
 var handlers = require("./handlers");

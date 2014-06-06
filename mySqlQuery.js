@@ -2,6 +2,7 @@ var mysql = require("mysql");
 function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	var queryString = "";
 	//Based on which function called queryDB use a specific query
+	console.log("test2");
 	if(functionCalledFrom.length == 1)
 	{
 		queryString = 'Select Name from subjectTable';
@@ -30,8 +31,10 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	//Execute the selected query and build html options to return to the callback function
 	if(functionCalledFrom.length != 3)
 	{
+		console.log("test3");
 	connection.query(queryString, function(error, rows, feilds){
 		if(error){throw error;}
+		console.log("test4");
   		for (var i=0; i < rows.length; i++) {
   			if(redun.indexOf(rows[i][functionCalledFrom[0]]) == -1)
   			{

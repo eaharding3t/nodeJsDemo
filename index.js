@@ -9,5 +9,6 @@ handle['/subjectExpand'] = handlers.subjectExpand;
 handle['/courseExpand'] = handlers.courseExpand;
 handle['/sectionExpand'] = handlers.sectionExpand;
 handle['/fileUpload'] = handlers.fileUpload;
+handle['/loadTest'] = handlers.loadTest;
 //Calls the function in server that listens on port 1337
 server.start(handle, router.route);

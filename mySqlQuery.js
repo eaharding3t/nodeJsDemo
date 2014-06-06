@@ -4,21 +4,21 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	//Based on which function called queryDB use a specific query
 	if(functionCalledFrom.length == 1)
 	{
-		queryString = 'Select subjectName from subjectTable';
+		queryString = 'Select Name from subjectTable';
 	}
 	else if(functionCalledFrom.length == 2)
 	{
-		queryString = 'Select courseName from subjectTable, courseIDTable'
-		+ ' WHERE (courseIDTable.subjectID = subjectTable.subjectID)'
-		+ ' AND (subjectTable.subjectName = '+getData['subject']+')';
+		queryString = 'Select Name from Subjects, Courses'
+		+ ' WHERE (Courses.SubjectID = Subjects.ID)'
+		+ ' AND (Subjects.Name = '+getData['subject']+')';
 	}
 	else if(functionCalledFrom.length == 3)
 	{
-		queryString = 'Select sectionName from subjectTable, courseIDTable, sectionTable'
+		queryString = 'Select sectionName from subjectTable, Courses, sectionTable'
 		+' WHERE (sectionTable.subjectID = subjectTable.subjectID)'
-		+' AND (sectionTable.courseID = courseIDTable.courseID)'
+		+' AND (sectionTable.courseID = Courses.courseID)'
 		+' AND (subjectTable.subjectName = '+getData['subject']+')'
-		+' AND (courseIDTable.courseName = '+getData['courseID']+')';		
+		+' AND (Courses.courseName = '+getData['courseID']+')';		
 	}
 	//For different servers change connection data
 	var connection = mysql.createConnection({
@@ -28,6 +28,8 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 		password: 'password'
 	});
 	//Execute the selected query and build html options to return to the callback function
+	if(functionCalledFrom.length != 3)
+	{
 	connection.query(queryString, function(error, rows, feilds){
 		if(error){throw error;}
   		for (var i=0; i < rows.length; i++) {
@@ -40,5 +42,6 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
   		}
   		callback(htmlString);
 	});
+}
 }
 exports.mySqlQuery = mySqlQuery;

@@ -340,7 +340,7 @@ function loadTest(getData, response) {
 				user: "root",
 				password: "password"
 			});
-			connection.query("Select * from course",function(error,rows,feilds){
+			connection.query("select * from Subjects, Courses where Courses.SubjectID = Subjects.ID",function(error,rows,feilds){
 			});
 		}
 }

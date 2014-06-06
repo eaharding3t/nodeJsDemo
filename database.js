@@ -12,6 +12,7 @@ function queryDB(getData, htmlString, databaseType, functionCalledFrom)
 		//This call uses the data from a mysql server of your choice.
 		else if (databaseType == 1)
 		{
+			console.log("test");
 			mySqlQuery.mySqlQuery(getData, htmlString, functionCalledFrom, callback);
 		}
 		//Dynamodb for different database change the config.json file

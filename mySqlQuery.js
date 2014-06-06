@@ -36,11 +36,8 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 		if(error){throw error;}
 		console.log("test4");
   		for (var i=0; i < rows.length; i++) {
-  			if(redun.indexOf(rows[i][functionCalledFrom[0]]) == -1)
-  			{
    				htmlString += '<option value="'+rows[i][functionCalledFrom[0]]+'">' 
    				+ String(rows[i][functionCalledFrom[0]]) + "</option>";
-   				redun.push(rows[i][functionCalledFrom[0]]);
    			}
   		}
   		callback(htmlString);

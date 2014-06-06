@@ -10,6 +10,7 @@ function start(handle, route)
 	//Takes getData from the request then makes a call to the router to deal with callbacks
 	function onRequest(request, response)
 	{
+		console.log('request hits');
 		var getData = "";
 		var pathname = url.parse(request.url).pathname;
 		getData = url.parse(request.url, true).query;

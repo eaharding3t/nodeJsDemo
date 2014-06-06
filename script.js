@@ -3,8 +3,8 @@ function loadTest(){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("loadTestList").innerHTML = xmlHttp.responseText;
 	};
-	xmlHttp.open("GET", 'http://test-loadbalancer-135195100.us-east-1.elb.amazonaws.com:1337/loadTest?loadTest="'+document.getElementById("loadTest").checked+'"', true);
-	XMLHttpRequest.send();
+	xmlHttp.open("GET", 'http://test-loadbalancer-135195100.us-east-1.elb.amazonaws.com:1337/loadTest?loadTest='+'true', true);
+	xmlHttp.send();
 }
 function onLoading(){
 	var xmlHttp = new XMLHttpRequest();

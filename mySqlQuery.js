@@ -39,9 +39,9 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
    				htmlString += '<option value="'+rows[i][functionCalledFrom[0]]+'">' 
    				+ String(rows[i][functionCalledFrom[0]]) + "</option>";
    			}
-  		}
   		callback(htmlString);
-	});
+  	});
+	}
 }
 }
 exports.mySqlQuery = mySqlQuery;

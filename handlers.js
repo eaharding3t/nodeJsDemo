@@ -332,18 +332,21 @@ function fileUpload(getData, response) {
 }
 
 function loadTest(getData, response) {
-	if(getData['loadTest'])
+	console.log(getData['loadTest']);
+	if(getData['loadTest']== 'true')
 		{
 			var connection = mysql.createConnection({
-				host : "ec2-54-85-7-38.compute-1.amazonaws.com",
+				host : "",
 				database: "mydb",
-				user: "root",
-				password: "password"
+				user: "testuser",
+				password: "password123"
 			});
-			connection.query("select * from Subjects, Courses where Courses.SubjectID = Subjects.ID",function(error,rows,feilds){
-				var loadTestList = "<p>";
-				for (var i = 0: i < rows.length; i++){
-					loadTestList += rows[i];
+			var rand = String(Math.round(Math.random()*100000));
+			connection.query("select * from Subjects, Courses where Courses.SubjectID = Subjects.ID OR Courses.ID ="+rand+" LIMIT "+rand,function(error,rows,feilds){
+				var loadTestList = "<p>"+rand+"<br/>";
+				console.log("working");
+				for (var i = 0; i < rows.length; i++){
+					loadTestList += String(rows[i]['Name'])+'<br/>';
 				}
 				loadTestList += "</p>";
 				var headers = {};

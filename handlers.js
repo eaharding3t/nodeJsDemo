@@ -48,10 +48,9 @@ function courseExpand(getData, response)
 	var list = '<form action="">'+ 
   		'<select id="sectionL" onchange="sectionExpand('+temp+',this.value)">'+
   		'<option value="">Select a section</option>';
-  		var help = ['section','courseID','subject'];
-  		console.log(help[0]);
+  		var functionCalledFrom = ['section','courseID','subject'];
   	//Funtion returns a function that generates the html for the options of the select box
-	database.queryDB(getData, list, getData['databaseType'], help)(function(htmlString){
+	database.queryDB(getData, list, getData['databaseType'], functionCalledFrom)(function(htmlString){
 		htmlString+='</select>'+'</form>';
   		var headers = {};
   		headers["Content-Type"] = "text/html";

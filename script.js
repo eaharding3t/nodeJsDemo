@@ -1,3 +1,11 @@
+function loadTest(){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange=function(){
+		document.getElementById("loadTestList").innerHTML = xmlHttp.responseText;
+	};
+	xmlHttp.open("GET", 'http://test-loadbalancer-135195100.us-east-1.elb.amazonaws.com:1337/loadTest?loadTest='+'true', true);
+	xmlHttp.send();
+}
 function onLoading(){
 	var xmlHttp = new XMLHttpRequest();
 	var databaseType = 3;

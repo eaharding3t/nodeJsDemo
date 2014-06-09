@@ -1,4 +1,5 @@
 //All of these requires allow the functions that are written in different files to be passed between files
+require('newrelic');
 var server = require("./server");
 var router = require("./route");
 var handlers = require("./handlers");
@@ -9,5 +10,6 @@ handle['/subjectExpand'] = handlers.subjectExpand;
 handle['/courseExpand'] = handlers.courseExpand;
 handle['/sectionExpand'] = handlers.sectionExpand;
 handle['/fileUpload'] = handlers.fileUpload;
+handle['/loadTest'] = handlers.loadTest;
 //Calls the function in server that listens on port 1337
 server.start(handle, router.route);

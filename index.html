@@ -3,9 +3,9 @@
 	<head>
 		<script type = "text/javascript" src="./script.js"></script>
   	</head>
-	<body>
+	<body onload = "loadTest()">
 		<form>
-			<input type = "checkbox" name = "loadTest" id = "loadTest" value = "0">Load Test</input>
+			<input type = "checkbox" name = "loadTest" id = "loadTest" value = "0" onChange = "loadTest()">Load Test</input>
 		</form>
 		<form>
 			<input type = "radio" name = "databaseType" id = "0" value = "0" onChange = "onLoading()">Hard-Coded</input>
@@ -17,5 +17,6 @@
 		<div id = "courseList"></div>
 		<div id = "sectionList"></div>
 		<div id = "detailsList"></div>
+		<div id = "loadTestList"></div>
 	</body>
 </html>

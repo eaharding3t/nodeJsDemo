@@ -2,12 +2,12 @@ var AWS = require("aws-sdk");
 function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 	var redun = [];
 	//To change which dynamoDB you are connecting to change the config.json file
-	AWS.config.loadFromPath('./config.json');
+	AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
 	var db = new AWS.DynamoDB();
 	//Based on which function called queryDB perform a different action on the dynamoDB
 	//Select all the subjects and remove duplicates and use this list to build options for display
 	if(functionCalledFrom[0] == 'subject'){
-		//Generate paramaters for the scan equivelent sql statment is
+		//Generate paramaters for the scan. equivelent sql statment is
 		// SELECT subject FROM classTable
 		var params = {
 			TableName: 'subject',

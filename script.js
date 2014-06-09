@@ -5,9 +5,6 @@ function loadTest(){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("loadTestList").innerHTML = xmlHttp.responseText;
 	};
-<<<<<<< HEAD
-	xmlHttp.open("GET", 'http://test-loadbalancer-135195100.us-east-1.elb.amazonaws.com:1337/loadTest?loadTest='+'true', true);
-=======
 	var get_array = {};
 	var get = window.location.search.substring(1);
 	var split_on_and = get.split("&");
@@ -16,7 +13,6 @@ function loadTest(){
 	split_on_equals = split_on_and[1].split("=");
 	var databaseType = split_on_equals[1]; 
 	xmlHttp.open("GET", 'http://test-loadbalancer-135195100.us-east-1.elb.amazonaws.com:1337/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
->>>>>>> 4f93d410949718b17dcb3774c408d418b6e1b995
 	xmlHttp.send();
 }
 //This function is called when a database type is selected by the user.

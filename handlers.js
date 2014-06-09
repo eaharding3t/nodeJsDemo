@@ -336,7 +336,7 @@ function loadTest(getData, response) {
 		{
 			switch(getData['databaseType'])
 			{
-				case 1:
+				case '1':
 					var connection = mysql.createConnection({
 						host : "ec2-54-209-177-247.compute-1.amazonaws.com",
 						database: "mydb",
@@ -358,14 +358,14 @@ function loadTest(getData, response) {
 						response.end();
 					});
 					break;
-				case 2:
+				case '2':
 					AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
 					var db = new AWS.DynamoDB();
 					var rand = Math.round(Math.random()*10000);
 					var params = {
 						TableName: 'course',
-						AttributesToGet: 'sectionID',
-						Limit: rand
+						AttributesToGet: ['sectionID']
+					//	Limit: rand
 					};
 					db.scan(params, function(err, data){
 						var loadTestList = "<p>"+rand+"<br/>";
@@ -382,11 +382,11 @@ function loadTest(getData, response) {
 						response.end();
 					});
 					break;
-				case 3:
+				case '3':
 					var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",
 						db = mongojs.connect(uri, ["loadTest"]),
 						rand = Math.round(Math.random()*10000);
-					db.mycollection.find(function(err, docs) {
+					db.loadTest.find(function(err, docs) {
     					var loadTestList = "<p>"+rand+"<br/>";
 						for(var i = 0; i < docs.length; i++)
 						{

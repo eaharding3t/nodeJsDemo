@@ -23,10 +23,10 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	}
 	//For different servers change connection data
 	var connection = mysql.createConnection({
-		host : 'ec2-54-85-7-38.compute-1.amazonaws.com',
-		database: 'mydb',
-		user : 'testuser',
-		password: 'password123'
+		host : "ec2-54-209-177-247.compute-1.amazonaws.com",
+						database: "mydb",
+						user: "testuser",
+						password: "password123"
 	});
 	//Execute the selected query and build html options to return to the callback function
 	if(functionCalledFrom.length != 3)

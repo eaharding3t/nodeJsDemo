@@ -122,10 +122,10 @@ function sectionExpand(getData, response)
 	}
 	if (getData['databaseType'] == 1) {
 		var connection = mysql.createConnection({
-				host : '127.0.0.1',
-				database: 'test',
-				user : 'root',
-				password: 'password123$'
+				host : "ec2-54-209-177-247.compute-1.amazonaws.com",
+						database: "mydb",
+						user: "testuser",
+						password: "password123"
 			});
 		connection.query('Select room, time, waitList, slotsTotal, slotsOpen, teacher from subjectTable, courseIDTable, sectionTable WHERE (sectionTable.subjectID = subjectTable.subjectID) AND (sectionTable.courseID = courseIDTable.courseID) AND (sectionName = ?) AND (courseName = ?) AND (subjectName = ?)',
 	 	[getData["subject"], getData["courseID"], getData["section"]],
@@ -338,7 +338,7 @@ function loadTest(getData, response) {
 			{
 				case 1:
 					var connection = mysql.createConnection({
-						host : "ec2-54-85-7-38.compute-1.amazonaws.com",
+						host : "ec2-54-209-177-247.compute-1.amazonaws.com",
 						database: "mydb",
 						user: "testuser",
 						password: "password123"
@@ -371,7 +371,7 @@ function loadTest(getData, response) {
 						var loadTestList = "<p>"+rand+"<br/>";
 						for(var i = 0; i < data['Items'].length; i++)
 						{
-							loadTestList+= String(data['Items'][i]['sectionID']['N'])+"<br/>";
+							loadTestList += String(data['Items'][i]['sectionID']['N'])+"<br/>";
 						}
 						loadTestList += "</p>";
 						var headers = {};
@@ -383,6 +383,23 @@ function loadTest(getData, response) {
 					});
 					break;
 				case 3:
+					var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",
+						db = mongojs.connect(uri, ["loadTest"]),
+						rand = Math.round(Math.random()*10000);
+					db.mycollection.find(function(err, docs) {
+    					var loadTestList = "<p>"+rand+"<br/>";
+						for(var i = 0; i < docs.length; i++)
+						{
+							loadTestList += String(docs[i]["Course"])+"<br/>";
+						}
+						loadTestList += "</p>";
+						var headers = {};
+						headers["Content-Type"] = "text/html";
+  						headers["Access-Control-Allow-Origin"] = "*";
+						response.writeHead(200, headers);
+						response.write(loadTestList);
+						response.end();
+					});
 					break;
 			}
 		}

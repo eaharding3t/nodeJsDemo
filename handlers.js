@@ -332,30 +332,59 @@ function fileUpload(getData, response) {
 }
 
 function loadTest(getData, response) {
-	console.log(getData['loadTest']);
 	if(getData['loadTest']== 'true')
 		{
-			var connection = mysql.createConnection({
-				host : "ec2-54-85-7-38.compute-1.amazonaws.com",
-				database: "mydb",
-				user: "testuser",
-				password: "password123"
-			});
-			var rand = String(Math.round(Math.random()*100000));
-			connection.query("select * from Subjects, Courses where Courses.SubjectID = Subjects.ID OR Courses.ID ="+rand+" LIMIT "+rand,function(error,rows,feilds){
-				var loadTestList = "<p>"+rand+"<br/>";
-				console.log("working");
-				for (var i = 0; i < rows.length; i++){
-					loadTestList += String(rows[i]['Name'])+'<br/>';
-				}
-				loadTestList += "</p>";
-				var headers = {};
-  				headers["Content-Type"] = "text/html";
-  				headers["Access-Control-Allow-Origin"] = "*";
-				response.writeHead(200, headers);
-				response.write(loadTestList);
-				response.end();
-			});
+			switch(getData['databaseType'])
+			{
+				case 1:
+					var connection = mysql.createConnection({
+						host : "ec2-54-85-7-38.compute-1.amazonaws.com",
+						database: "mydb",
+						user: "testuser",
+						password: "password123"
+					});
+					var rand = String(Math.round(Math.random()*100000));
+					connection.query("select * from Subjects, Courses where Courses.SubjectID = Subjects.ID OR Courses.ID ="+rand+" LIMIT "+rand,function(error,rows,feilds){
+						var loadTestList = "<p>"+rand+"<br/>";
+						for (var i = 0; i < rows.length; i++){
+							loadTestList += String(rows[i]['Name'])+'<br/>';
+						}
+						loadTestList += "</p>";
+						var headers = {};
+  						headers["Content-Type"] = "text/html";
+  						headers["Access-Control-Allow-Origin"] = "*";
+						response.writeHead(200, headers);
+						response.write(loadTestList);
+						response.end();
+					});
+					break;
+				case 2:
+					AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+					var db = new AWS.DynamoDB();
+					var rand = Math.round(Math.random()*10000);
+					var params = {
+						TableName: 'course',
+						AttributesToGet: 'sectionID',
+						Limit: rand
+					};
+					db.scan(params, function(err, data){
+						var loadTestList = "<p>"+rand+"<br/>";
+						for(var i = 0; i < data['Items'].length; i++)
+						{
+							loadTestList+= String(data['Items'][i]['sectionID']['N'])+"<br/>";
+						}
+						loadTestList += "</p>";
+						var headers = {};
+						headers["Content-Type"] = "text/html";
+  						headers["Access-Control-Allow-Origin"] = "*";
+						response.writeHead(200, headers);
+						response.write(loadTestList);
+						response.end();
+					});
+					break;
+				case 3:
+					break;
+			}
 		}
 }
 

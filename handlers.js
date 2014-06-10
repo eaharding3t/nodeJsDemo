@@ -121,7 +121,7 @@ function sectionExpand(getData, response)
 	}
 	if (getData['databaseType'] == 1) {
 		var connection = mysql.createConnection({
-				host : "ec2-54-209-177-247.compute-1.amazonaws.com",
+				host : "db.2020ar.com",
 						database: "mydb",
 						user: "testuser",
 						password: "password123"
@@ -178,6 +178,7 @@ function sectionExpand(getData, response)
 				}
 			}
 		}
+		try{
 		db.query(params, function(err,data){
 			var locate = 0;
 			for(var i =0;i<data['Items'].length;i++)
@@ -217,6 +218,8 @@ function sectionExpand(getData, response)
 			response.write(table);
 			response.end();
 		});
+		}
+		catch(err){}
 	}
 
 	//mongo section details table
@@ -337,7 +340,7 @@ function loadTest(getData, response) {
 			{
 				case '1':
 					var connection = mysql.createConnection({
-						host : "ec2-54-209-177-247.compute-1.amazonaws.com",
+						host : "db.2020ar.com",
 						database: "mydb",
 						user: "testuser",
 						password: "password123"
@@ -366,20 +369,25 @@ function loadTest(getData, response) {
 						AttributesToGet: ['sectionID']
 					//	Limit: rand
 					};
+					try{
 					db.scan(params, function(err, data){
 						var loadTestList = "<p>"+rand+"<br/>";
-						for(var i = 0; i < data['Items'].length; i++)
-						{
-							loadTestList += String(data['Items'][i]['sectionID']['N'])+"<br/>";
-						}
-						loadTestList += "</p>";
-						var headers = {};
-						headers["Content-Type"] = "text/html";
-  						headers["Access-Control-Allow-Origin"] = "*";
-						response.writeHead(200, headers);
-						response.write(loadTestList);
-						response.end();
+						if(data != null){
+							for(var i = 0; i < data['Items'].length; i++)
+							{
+								loadTestList += String(data['Items'][i]['sectionID']['N'])+"<br/>";
+							}
+							loadTestList += "</p>";
+							var headers = {};
+							headers["Content-Type"] = "text/html";
+  							headers["Access-Control-Allow-Origin"] = "*";
+							response.writeHead(200, headers);
+							response.write(loadTestList);
+							response.end();}
 					});
+					}
+					catch(err)
+					{}
 					break;
 				case '3':
 					var uri = "mongodb://root:password@ds033699.mongolab.com:33699/ke_db",

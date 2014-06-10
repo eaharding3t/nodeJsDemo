@@ -13,8 +13,9 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 			TableName: 'subject',
 			AttributesToGet: [functionCalledFrom[0]],
 		}
+		try{
 		db.scan(params, function(err,data){
-			if(err){throw err;}
+			if(err){console.log(err);}
 			else{
 				for (var i=0; i < data['Items'].length; i++) {
    						htmlString += '<option value="'+data['Items'][i]['subject']['S']+'">' 
@@ -24,6 +25,8 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 			}
 
 		});
+		}
+		catch(err){}
 	}
 	//Select all courseIDs with a subject matching the above select box
 	else if(functionCalledFrom[0] == 'courseID'){
@@ -41,8 +44,9 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 				}
 			}
 		}
+		try{
 		db.query(params, function(err,data){
-			if(err){throw err;}
+			if(err){console.log(err);}
 			else{
 				for (var i=0; i < data['Items'].length; i++) {
   					if(redun.indexOf(data['Items'][i]['course']['S']) == -1)
@@ -54,6 +58,9 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
   				callback(htmlString);
 			}
 		});
+		}
+		catch(err)
+		{}
 	}
 	//Select all sections with a courseID matching the above select box
 	else if(functionCalledFrom[0] == 'section'){
@@ -71,8 +78,9 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
 				}
 			}
 		}
+		try{
 		db.query(params, function(err,data){
-			if(err){throw err;}
+			if(err){console.log(err);}
 			else{
 				for (var i=0; i < data['Items'].length; i++) {
   					if(redun.indexOf(data['Items'][i]['section']['S']) == -1)
@@ -84,6 +92,8 @@ function dynamoQuery(getData, htmlString, functionCalledFrom, callback){
   				callback(htmlString);
 			}
 		});
+		}
+		catch(err){}
 	}
 }
 exports.dynamoQuery = dynamoQuery;

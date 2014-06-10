@@ -22,7 +22,7 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	}
 	//For different servers change connection data
 	var connection = mysql.createConnection({
-		host : "ec2-54-209-177-247.compute-1.amazonaws.com",
+		host : "db.2020ar.com",
 						database: "mydb",
 						user: "testuser",
 						password: "password123"

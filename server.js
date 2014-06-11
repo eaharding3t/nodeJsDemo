@@ -13,8 +13,7 @@ function start(handle, route)
 		var getData = "";
 		var pathname = url.parse(request.url).pathname;
 		getData = url.parse(request.url, true).query;
-		route(handle ,pathname, getData, response);
-		
+		route(handle ,pathname, getData, response);	
 	}
 	http.createServer(onRequest).listen(1337, os.hostname());
 }

@@ -107,6 +107,17 @@ function fileUpload(subj ,courseID, sect){var xmlHttp = new XMLHttpRequest();
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
+function cacheIt(subj,course){ var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function(){
+		if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
+		{
+			document.getElementById("cacheIt").innerHTML = xmlHttp.responseText;
+		}
+	};
+	var url = "http://basicpoc.2020ar.com:1337/cacheIt?key="+subj+"&value="+course;
+	xmlHttp.open("GET", url, true);
+	xmlHttp.send();
+}
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)

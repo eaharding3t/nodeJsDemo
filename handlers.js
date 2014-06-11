@@ -3,6 +3,8 @@ var database = require("./database");
 var mongojs = require("mongojs");
 var AWS = require("aws-sdk");
 var fs = require("fs");
+var memcache = require("memcached");
+var redis = require("redis");
 // Called on database selection to populate subject list
 function onLoading(getData, response)
 {
@@ -189,7 +191,6 @@ function sectionExpand(getData, response)
 					break;
 				}
 			}
-			//console.log(data['Items']);
 			table += '<table border="1" style="width:500px">'+
 						'<tr>'+
   							'<td>Slots open</td>'+
@@ -214,6 +215,8 @@ function sectionExpand(getData, response)
     		headers["Access-Control-Allow-Origin"] = "*";
     		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('subjectL')";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+		temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
+		table+='<br><div id = "cacheButton"><button onclick = "cacheIt('+temp+')">Cache your result with memcached</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
 			response.end();
@@ -411,10 +414,55 @@ function loadTest(getData, response) {
 			}
 		}
 }
-
+function cacheIt(getData, response)
+{
+	if(getData['cacheType'] == 'memcache')
+	{
+		var cache = new memcache('');
+		cache.set(getData['key'], getData['value'], 120,  function(err){
+			if(err){throw err;}
+			else{
+				cache.get(getData['key'], function(err,data){
+					if(err){throw err;}
+					else{
+						var headers={};
+						headers["Content-Type"] = "text/html";
+						headers["Access-Control-Allow-Origin"] = "*";
+						response.writeHead(200, headers);
+						response.write("<p>"+data+"</p>");
+						cache.exit();
+						response.end();
+					}
+				});
+			}
+		});
+	}
+	else if(getData['cacheType'] == 'redis')
+	{
+	var cache = redis.createClient(6379, "eh-poc-redis.5lfapr.0001.use1.cache.amazonaws.com");
+	cache.set(getData['key'], getData['value'], function(err){
+		if(err){throw err;}
+		else{
+			cache.get(getData['key'], function(err, data){
+				if(err){throw err;}
+				else{
+					var headers={};
+					headers["Content-Type"] = "text/html";
+					headers["Access-Control-Allow-Origin"] = "*";
+					response.writeHead(200, headers);
+					response.write("<p>"+data+"</p>");
+					cache.quit();
+					response.end();
+				}
+			});
+		}
+	});
+}
+}
 exports.fileUpload = fileUpload;
 exports.onLoading = onLoading;
 exports.subjectExpand = subjectExpand;
 exports.courseExpand = courseExpand;
 exports.sectionExpand = sectionExpand;
 exports.loadTest = loadTest;
+exports.cacheIt = cacheIt;

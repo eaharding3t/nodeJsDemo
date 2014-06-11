@@ -14,7 +14,7 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	}
 	else if(functionCalledFrom.length == 3)
 	{
-		queryString = 'iasdSelect sectionName from subjectTable, Courses, sectionTable'
+		queryString = 'Select sectionName from subjectTable, Courses, sectionTable'
 		+' WHERE (sectionTable.subjectID = subjectTable.subjectID)'
 		+' AND (sectionTable.courseID = Courses.courseID)'
 		+' AND (subjectTable.subjectName = '+getData['subject']+')'
@@ -22,10 +22,10 @@ function mySqlQuery(getData, htmlString, functionCalledFrom, callback){
 	}
 	//For different servers change connection data
 	var connection = mysql.createConnection({
-		host : "db.2020ar.com",
-						database: "mydb",
-						user: "testuser",
-						password: "password123"
+		host : "pocdb.2020ar.com",
+		database: "mydb",
+		user: "testuser",
+		password: "password123"
 	});
 	//Execute the selected query and build html options to return to the callback function
 	if(functionCalledFrom.length != 3)

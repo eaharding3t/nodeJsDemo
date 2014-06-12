@@ -422,9 +422,9 @@ function cacheIt(getData, response)
 	{
 		AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
 		var memConfig = new AWS.ElastiCache();
-		console.log("test");
 		var params = {
-			CacheClusterId: 'poc-eh-memcache'
+			CacheClusterId: 'poc-eh-memcache',
+			ShowCacheNodeInfo: true
 		};
 		var nodes = [];
 		memConfig.describeCacheClusters(params, function(err,data){
@@ -433,10 +433,7 @@ function cacheIt(getData, response)
 			{
 				nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
 			}
-		console.log(data);
-		console.log(nodes);
 		var cache = new memcache(nodes);
-		console.log(cache);
 		cache.set(getData['key'], getData['value'], 120,  function(err){
 			if(err){throw err;}
 			else{
@@ -448,7 +445,7 @@ function cacheIt(getData, response)
 						headers["Access-Control-Allow-Origin"] = "*";
 						response.writeHead(200, headers);
 						response.write("<p>"+data+"</p>");
-						cache.exit();
+						cache.end();
 						response.end();
 					}
 				});

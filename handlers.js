@@ -114,6 +114,8 @@ function sectionExpand(getData, response)
     		headers["Access-Control-Allow-Origin"] = "*";
     		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+		temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
+		table+='<br/><div id = "cacheIt"><button onclick = "cacheIt('+temp+')">Cache your results</button></div>';
 	    	response.writeHead(200, headers);
 	 		response.write(table);
 	 		response.end();
@@ -209,9 +211,11 @@ function sectionExpand(getData, response)
 
 					var headers = {};
   					headers["Content-Type"] = "text/html";
-    				headers["Access-Control-Allow-Origin"] = "*";
-    				var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('subjectL')";
-    				table +='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+    					headers["Access-Control-Allow-Origin"] = "*";
+    					var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('subjectL')";
+    					table +='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+					temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
+					table+='<br/><div id = "cacheIt"><button onclick = "cacheIt('+temp+')">Cache your results</button></div>';
 					response.writeHead(200, headers);
 					response.write(table);
 					response.end();
@@ -249,9 +253,11 @@ function sectionExpand(getData, response)
 
 			var headers = {};
   			headers["Content-Type"] = "text/html";
-    		headers["Access-Control-Allow-Origin"] = "*";
-    		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
-    		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+    			headers["Access-Control-Allow-Origin"] = "*";
+    			var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
+    			table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+			temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
+			table+='<br/><div id = "cacheIt"><button onclick = "cacheIt('+temp+')">Cache your results</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
 			response.end();
@@ -414,7 +420,23 @@ function cacheIt(getData, response)
 {
 	if(getData['cacheType'] == 'memcache')
 	{
-		var cache = new memcache('');
+		AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+		var memConfig = new AWS.ElastiCache();
+		console.log("test");
+		var params = {
+			CacheClusterId: 'poc-eh-memcache'
+		};
+		var nodes = [];
+		memConfig.describeCacheClusters(params, function(err,data){
+			if(err){throw err;}
+			for(var i = 0; i<data['CacheClusters'][0]['CacheNodes'].length; i++)
+			{
+				nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
+			}
+		console.log(data);
+		console.log(nodes);
+		var cache = new memcache(nodes);
+		console.log(cache);
 		cache.set(getData['key'], getData['value'], 120,  function(err){
 			if(err){throw err;}
 			else{
@@ -432,13 +454,16 @@ function cacheIt(getData, response)
 				});
 			}
 		});
+		});
 	}
 	else if(getData['cacheType'] == 'redis')
 	{
-	var cache = redis.createClient(6379, "eh-poc-redis.5lfapr.0001.use1.cache.amazonaws.com");
+	var cache = redis.createClient(6379,"pocredis.2020ar.com");
 	cache.set(getData['key'], getData['value'], function(err){
 		if(err){throw err;}
 		else{
+			cache.expire(getData['key'], 120, function(err){
+			});
 			cache.get(getData['key'], function(err, data){
 				if(err){throw err;}
 				else{

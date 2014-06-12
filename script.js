@@ -114,7 +114,15 @@ function cacheIt(subj,course){ var xmlHttp = new XMLHttpRequest();
 			document.getElementById("cacheIt").innerHTML = xmlHttp.responseText;
 		}
 	};
-	var url = "http://basicpoc.2020ar.com:1337/cacheIt?key="+subj+"&value="+course;
+	var cacheType ="";
+	if(document.getElementById("memcache").checked)
+	{
+		cacheType = "memcache";
+	}
+	else{
+		cacheType = "redis";
+	}
+	var url = "http://basicpoc.2020ar.com:1337/cacheIt?key="+subj+"&value="+course+"&cacheType="+cacheType;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }

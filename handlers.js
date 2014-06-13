@@ -5,6 +5,7 @@ var AWS = require("aws-sdk");
 var fs = require("fs");
 var memcache = require("memcached");
 var redis = require("redis");
+var elasticacheAutoScaling = require('./elasticacheAutoScaling');
 // Called on database selection to populate subject list
 function onLoading(getData, response)
 {

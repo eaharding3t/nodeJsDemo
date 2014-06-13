@@ -1,14 +1,14 @@
+var AWS = require("aws-sdk");
 function autoScaling(cpuPercent, cacheName, timeBeforeNextScale)
 {
 	AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
-	var elasticache = new ElastiCache();
+	var elasticache = new AWS.ElastiCache();
 	var params = {
 		CacheClusterId: cacheName
 	};
 	elasticache.describeCacheClusters(params, function(err, data){
 			//checkSleep(data['CacheClusters'][0]['Engine'], fuction(data){
 			//if(!data){
-				var cloudWatch = new AWS.CloudWatch();
 				var averageCPU = 0;
 				var tasksCompleted = 0;
 				var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
@@ -37,12 +37,11 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale)
 		//});
 	});
 }
-	
-}
 function checkCPU(nodeNum, callback)
 {
 	var tasksCompleted = 0;
-	for(int i = 0; i < nodeNum; i++)
+	var cloudWatch = new AWS.CloudWatch();
+	for(var i = 0; i < nodeNum; i++)
 		{
 			var val = '000'+String(i);
 			params = {
@@ -64,7 +63,7 @@ function checkCPU(nodeNum, callback)
 				if(err){throw err;}
 				else{
 					averageCPU+=data['Datapoints'][0]['Average'];
-					if(tasksCompleted == (nodeNum-1)
+					if(tasksCompleted == (nodeNum-1))
 					{
 						averageCPU = averageCPU/nodeNum;
 						callback(averageCPU);
@@ -123,3 +122,4 @@ function checkSleep(cacheEngineType, callback){
 		});
 	} 
 }
+exports.autoScaling = autoScaling;

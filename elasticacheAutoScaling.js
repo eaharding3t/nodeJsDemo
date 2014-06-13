@@ -29,6 +29,9 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale)
 							//sleepExecution(data['CacheClusters'][0]['Engine'], timeBeforeNextScale);
 						//});
 					}
+					else{
+						console.log("test");
+					}
 				});
 			});
 	});

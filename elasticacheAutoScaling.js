@@ -1,4 +1,4 @@
-function autoScaling(cpuPercent, direction, cacheName, timeBeforeNextScale)
+function autoScaling(cpuPercent, cacheName, timeBeforeNextScale)
 {
 	AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
 	var elasticache = new ElastiCache();
@@ -13,16 +13,18 @@ function autoScaling(cpuPercent, direction, cacheName, timeBeforeNextScale)
 				var tasksCompleted = 0;
 				var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
 				checkCPU(nodeNum, function(averageCPU){
-					if(averageCPU >= cpuPercent && direction)
+					if(averageCPU >= cpuPercent)
 					{
+						console.log("test");
 						nodeNum+=1;
 						//scaleCluster(elasticache, nodeNum, function(){
 							//sleepExecution(data['CacheClusters'][0]['Engine'], timeBeforeNextScale);
 						//});
 					}
-					else if (averageCPU < cpuPercent && !(direction))
+					else if (averageCPU < cpuPercent)
 					{
 						nodeNum=nodNum-1;
+						console.log("test");
 						//scaleCluster(elasticache,nodeNum,function(){
 							//sleepExecution(data['CacheClusters'][0]['Engine'], timeBeforeNextScale);
 						//});

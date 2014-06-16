@@ -9,34 +9,6 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 		CacheClusterId: cacheName
 	};
 	elasticache.describeCacheClusters(params, function(err, data){
-<<<<<<< HEAD
-			checkSleep(data['CacheClusters'][0]['Engine'], fuction(data){
-			if(!data){
-				var cloudWatch = new AWS.CloudWatch();
-				var averageCPU = 0;
-				var tasksCompleted = 0;
-				var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
-				checkCPU(nodeNum, function(averageCPU){
-					if(averageCPU >= cpuPercent)
-					{
-						console.log("test");
-						nodeNum+=1;
-						//scaleCluster(elasticache, nodeNum, function(){
-							sleepExecution(data['CacheClusters'][0]['Engine'], timeBeforeNextScale);
-						//});
-					}
-					else if (averageCPU < cpuPercent)
-					{
-						nodeNum=nodNum-1;
-						console.log("test");
-						//scaleCluster(elasticache,nodeNum,function(){
-							sleepExecution(data['CacheClusters'][0]['Engine'], timeBeforeNextScale);
-						//});
-					}
-				});
-			//}
-		//});
-=======
 			var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
 			var engineType = data['CacheClusters'][0]['Engine'];
 			checkSleep(data['CacheClusters'][0]['Engine'],cache,  function(data){
@@ -68,7 +40,6 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 					});
 				}
 			});
->>>>>>> 9e2e9ceb9955ca6c64c57a5f00c6d5f178a02db0
 	});
 }
 function checkCPU(nodeNum, averageCPU, engineType, callback)

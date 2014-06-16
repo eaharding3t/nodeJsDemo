@@ -1,5 +1,7 @@
 var AWS = require("aws-sdk");
-function autoScaling(cpuPercent, cacheName, timeBeforeNextScale)
+var memcached = require("memcached");
+var redis = require("redis");
+function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 {
 	AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
 	var elasticache = new AWS.ElastiCache();
@@ -7,43 +9,49 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale)
 		CacheClusterId: cacheName
 	};
 	elasticache.describeCacheClusters(params, function(err, data){
-			//checkSleep(data['CacheClusters'][0]['Engine'], fuction(data){
-			//if(!data){
-				var averageCPU = 0;
-				var tasksCompleted = 0;
-				var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
-				checkCPU(nodeNum, function(averageCPU){
-					if(averageCPU >= cpuPercent)
-					{
-						console.log("test");
-						nodeNum+=1;
-						//scaleCluster(elasticache, nodeNum, function(){
-							//sleepExecution(data['CacheClusters'][0]['Engine'], timeBeforeNextScale);
-						//});
-					}
-					else if (averageCPU < cpuPercent)
-					{
-						nodeNum=nodNum-1;
-						console.log("test");
-						//scaleCluster(elasticache,nodeNum,function(){
-							//sleepExecution(data['CacheClusters'][0]['Engine'], timeBeforeNextScale);
-						//});
-					}
-					else{
-						console.log("test");
-					}
-				});
-			//}
-		//});
+			var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
+			var engineType = data['CacheClusters'][0]['Engine'];
+			checkSleep(data['CacheClusters'][0]['Engine'],cache,  function(data){
+				if(!data){
+					console.log(data);
+					var averageCPU = 0;
+					checkCPU(nodeNum, averageCPU, engineType, function(averageCPU, engineType){
+						if(averageCPU <= cpuPercent)
+						{
+							console.log("test");
+							nodeNum+=1;
+							scaleCluster(elasticache, nodeNum, function(){
+								sleepExecution(engineType, timeBeforeNextScale, cache);
+							});
+						}
+						else if (averageCPU > cpuPercent)
+						{
+							nodeNum=nodeNum-1;
+							console.log(nodeNum);
+							if(nodeNum > 0){
+								scaleCluster(elasticache,nodeNum,function(){
+									sleepExecution(engineType, timeBeforeNextScale, cache);
+								});
+							}
+						}
+						else{
+							console.log("test");
+						}
+					});
+				}
+			});
 	});
 }
-function checkCPU(nodeNum, callback)
+function checkCPU(nodeNum, averageCPU, engineType, callback)
 {
 	var tasksCompleted = 0;
 	var cloudWatch = new AWS.CloudWatch();
 	for(var i = 0; i < nodeNum; i++)
 		{
-			var val = '000'+String(i);
+			var val = '000'+String(i+1);
+			var startDate = new Date();
+			startDate.setMinutes(startDate.getMinutes()-2);
+			var endDate = new Date();
 			params = {
 				Namespace: 'AWS/ElastiCache',
 				Period: 60,
@@ -55,8 +63,8 @@ function checkCPU(nodeNum, callback)
 				Statistics: [
 					'Average'
 				],
-				StartTime: 'Thu Jun 12 2014 10:00:00 GMT-0800 (PST)',
-				EndTime: 'Thu Jun 12 2014 12:00:00 GMT-0800 (PST)',
+				StartTime: startDate,
+				EndTime: endDate,
 				Unit: 'Bytes'
 			};
 			cloudWatch.getMetricStatistics(params, function(err,data){
@@ -66,7 +74,7 @@ function checkCPU(nodeNum, callback)
 					if(tasksCompleted == (nodeNum-1))
 					{
 						averageCPU = averageCPU/nodeNum;
-						callback(averageCPU);
+						callback(averageCPU, engineType);
 					}
 					else{tasksCompleted++;}
 				}
@@ -75,48 +83,56 @@ function checkCPU(nodeNum, callback)
 }
 function scaleCluster(elasticache, nodeNum, callback)
 {
+	var nodeId = String(nodeNum+1);
+	var stringLength = 4 - nodeId.length;
+	for(var i = 0; i<stringLength; i++)
+	{
+		nodeId = '0'+nodeId;
+	}
+	console.log(nodeId);
+	console.log(nodeNum);
 	params = {
 		CacheClusterId: 'poc-eh-memcache',
-		NumCacheNodes: nodNum,
-		ApplyImmediately: true
+		NumCacheNodes: nodeNum,
+		ApplyImmediately: true,
+		CacheNodeIdsToRemove: [nodeId]
 	};
 	elasticache.modifyCacheCluster(params, function(err, data){
 	});
 	callback();
 }
-function sleepExecution(cacheEngineType, timeBeforeNextScale){
+function sleepExecution(cacheEngineType, timeBeforeNextScale, cache){
 	if(cacheEngineType == 'redis')
 	{
-		var cache = redis.createClient(6379, "pocreids.2020ar.com");
 		cache.set('sleep', 'true', function(err){
 			cache.expire('sleep', timeBeforeNextScale, function(err){
+				cache.quit();
 			});
 		});
 	}
 	else{
-		var cache = memcache("pocmemcache.2020ar.com");
 		cache.set('sleep', 'true', timeBeforeNextScale, function(err){
-
+			cache.end();
 		});
 	}
 }
-function checkSleep(cacheEngineType, callback){
+function checkSleep(cacheEngineType,cache, callback){
 	if(cacheEngineType == 'redis'){
-		var cache = redis.createClient(6379,"pocreids.2020ar.com");
 		cache.get('sleep', function(err,data){
 			if(err){throw err;}
 			else{
-				cache.quit();
+				if(data == 'true'){
+					cache.quit();}
 				callback(data);
 			}
 		});
 	}
 	else{
-		var cache = memcache("pocmemcache.2020ar.com");
 		cache.get('sleep', function(err,data){
 			if(err){throw err;}
 			else{
-				cache.end();
+				if(data == 'true'){
+					cache.end();}
 				callback(data);
 			}
 		});

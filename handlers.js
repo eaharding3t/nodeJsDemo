@@ -446,8 +446,7 @@ function cacheIt(getData, response)
 						headers["Access-Control-Allow-Origin"] = "*";
 						response.writeHead(200, headers);
 						response.write("<p>"+data+"</p>");
-						elasticacheAutoScaling.autoScaling(2000000, 'poc-eh-redis', 300);
-						cache.end();
+						elasticacheAutoScaling.autoScaling(2000000, 'poc-eh-memcache', 300, cache);
 						response.end();
 					}
 				});
@@ -471,8 +470,7 @@ function cacheIt(getData, response)
 					headers["Access-Control-Allow-Origin"] = "*";
 					response.writeHead(200, headers);
 					response.write("<p>"+data+"</p>");
-					elasticacheAutoScaling.autoScaling(2000000, 'poc-eh-redis', 300);
-					cache.quit();
+					elasticacheAutoScaling.autoScaling(2000000, 'poc-eh-redis', 300, cache);
 					response.end();
 				}
 			});

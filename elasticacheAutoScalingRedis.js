@@ -10,7 +10,7 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 	elasticache.describeReplicationGroups(params, function(err, data){
 		var nodeNum = data['ReplicationGroups'][0]['MemberClusters'].length;
 		checkSleep(cache, function(sleepy){
-			if(!sleepy){
+			if(sleepy != 'true'){
 				var readAttempts = 0;
 				checkReads(nodeNum, readAttempts, data, function(readAttempts){
 					if(readAttempts >= cpuPercent){
@@ -39,7 +39,7 @@ function checkReads(nodeNum, readAttempts, clustersData, callback){
 		startDate.setMinutes(startDate.getMinutes()-2);
 		var endDate = new Date();
 		var params = {
-			NameSpace: 'AWS/ElastiCache',
+			Namespace: 'AWS/ElastiCache',
 			Period: 120,
 			MetricName: 'GetTypeCmds',
 			Dimensions: [

@@ -10,13 +10,11 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 	elasticache.describeCacheClusters(params, function(err, data){
 			var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
 			checkSleep(cache,  function(sleepy){
-				if(!sleepy){
-					console.log(data);
+				if(sleepy != 'true'){
 					var averageCPU = 0;
-					checkCPU(nodeNum, averageCPU, function(averageCPU, engineType){
+					checkCPU(nodeNum, averageCPU, function(averageCPU){
 						if(averageCPU <= cpuPercent)
 						{
-							console.log("test");
 							nodeNum+=1;
 							scaleCluster(elasticache, nodeNum,true, function(){
 								sleepExecution(timeBeforeNextScale, cache);
@@ -25,7 +23,6 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 						else if (averageCPU > cpuPercent)
 						{
 							nodeNum=nodeNum-1;
-							console.log(nodeNum);
 							if(nodeNum > 0){
 								scaleCluster(elasticache,nodeNum,false, function(){
 									sleepExecution(timeBeforeNextScale, cache);
@@ -33,7 +30,6 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 							}
 						}
 						else{
-							console.log("test");
 						}
 					});
 				}
@@ -87,8 +83,6 @@ function scaleCluster(elasticache, nodeNum, direction, callback)
 	{
 		nodeId = '0'+nodeId;
 	}
-	console.log(nodeId);
-	console.log(nodeNum);
 	var params = {};
 	if(direction){
 		params = {

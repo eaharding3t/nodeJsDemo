@@ -24,15 +24,16 @@ function start(handle, route)
 	AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
         var memConfig = new AWS.ElastiCache();
 	//If the config file says that the engine is redis, a conection to the redis node is established and every minute it checks to see if a new read replica is needed. 
-	if(process.env.PARAM1 == 'redis'){
-        	var cache = createClient(6379, "pocredis.2020ar.com");
+	if(true){
+		
+        	var cache = redis.createClient(6379, "pocredis.2020ar.com");
 		setInterval(function(){
-			console.log("testing");
-			elasticacheAutoScalingRedis.autoScaling(2000000, 'poc-eh-redis-rep', 300, cache);}, 60000);
+			console.log("test");
+			elasticacheAutoScalingRedis.autoScalingRedis(2000000, 'poc-eh-redis-rep', 300, cache);}, 10000);
         }
 	//If the config file says that the engine is memcache, all of the nodes in the cluster are found and a connection is generated to all of them and every
 	//minute it checks to see if a new node is needed.
-	else if(process.env.PARAM1 == 'memcache'){
+	else if(false){
 		setInterval(function(){
         		var params = {
         			CacheClusterId: 'poc-eh-memcache',
@@ -46,7 +47,6 @@ function start(handle, route)
                 			nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
                 		}
         			var cache = new memcache(nodes);
-				console.log("testing");
 				elasticacheAutoScaling.autoScaling(2000000, 'poc-eh-memcache', 300, cache);
 			});
 		}, 60000);

@@ -1,6 +1,5 @@
 var AWS = require("aws-sdk");
 var memcached = require("memcached");
-var redis = require("redis");
 function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 {
 	AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
@@ -10,18 +9,17 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 	};
 	elasticache.describeCacheClusters(params, function(err, data){
 			var nodeNum = data['CacheClusters'][0]['NumCacheNodes'];
-			var engineType = data['CacheClusters'][0]['Engine'];
-			checkSleep(data['CacheClusters'][0]['Engine'],cache,  function(data){
-				if(!data){
+			checkSleep(cache,  function(sleepy){
+				if(!sleepy){
 					console.log(data);
 					var averageCPU = 0;
-					checkCPU(nodeNum, averageCPU, engineType, function(averageCPU, engineType){
+					checkCPU(nodeNum, averageCPU, function(averageCPU, engineType){
 						if(averageCPU <= cpuPercent)
 						{
 							console.log("test");
 							nodeNum+=1;
-							scaleCluster(elasticache, nodeNum, function(){
-								sleepExecution(engineType, timeBeforeNextScale, cache);
+							scaleCluster(elasticache, nodeNum,true, function(){
+								sleepExecution(timeBeforeNextScale, cache);
 							});
 						}
 						else if (averageCPU > cpuPercent)
@@ -29,8 +27,8 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 							nodeNum=nodeNum-1;
 							console.log(nodeNum);
 							if(nodeNum > 0){
-								scaleCluster(elasticache,nodeNum,function(){
-									sleepExecution(engineType, timeBeforeNextScale, cache);
+								scaleCluster(elasticache,nodeNum,false, function(){
+									sleepExecution(timeBeforeNextScale, cache);
 								});
 							}
 						}
@@ -42,7 +40,7 @@ function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 			});
 	});
 }
-function checkCPU(nodeNum, averageCPU, engineType, callback)
+function checkCPU(nodeNum, averageCPU,  callback)
 {
 	var tasksCompleted = 0;
 	var cloudWatch = new AWS.CloudWatch();
@@ -54,7 +52,7 @@ function checkCPU(nodeNum, averageCPU, engineType, callback)
 			var endDate = new Date();
 			params = {
 				Namespace: 'AWS/ElastiCache',
-				Period: 60,
+				Period: 120,
 				MetricName: 'FreeableMemory',
 				Dimensions: [
 				{Name: 'CacheClusterId',Value: 'poc-eh-memcache'},
@@ -74,14 +72,14 @@ function checkCPU(nodeNum, averageCPU, engineType, callback)
 					if(tasksCompleted == (nodeNum-1))
 					{
 						averageCPU = averageCPU/nodeNum;
-						callback(averageCPU, engineType);
+						callback(averageCPU);
 					}
 					else{tasksCompleted++;}
 				}
 			});
 		}
 }
-function scaleCluster(elasticache, nodeNum, callback)
+function scaleCluster(elasticache, nodeNum, direction, callback)
 {
 	var nodeId = String(nodeNum+1);
 	var stringLength = 4 - nodeId.length;
@@ -91,51 +89,39 @@ function scaleCluster(elasticache, nodeNum, callback)
 	}
 	console.log(nodeId);
 	console.log(nodeNum);
-	params = {
-		CacheClusterId: 'poc-eh-memcache',
-		NumCacheNodes: nodeNum,
-		ApplyImmediately: true,
-		CacheNodeIdsToRemove: [nodeId]
-	};
+	var params = {};
+	if(direction){
+		params = {
+			CacheClusterId: 'poc-eh-memcache',
+			NumCacheNodes: nodeNum,
+			ApplyImmediately: true,
+		};
+	}
+	else{ 
+		params = {
+			CacheClusterId: 'poc-eh-memcache',
+			NumCacheNodes: nodeNum,
+			ApplyImmediately: true,
+			CacheNodeIdsToRemove: [nodeId]
+		};
+	}
 	elasticache.modifyCacheCluster(params, function(err, data){
 	});
 	callback();
 }
 function sleepExecution(cacheEngineType, timeBeforeNextScale, cache){
-	if(cacheEngineType == 'redis')
-	{
-		cache.set('sleep', 'true', function(err){
-			cache.expire('sleep', timeBeforeNextScale, function(err){
-				cache.quit();
-			});
-		});
-	}
-	else{
-		cache.set('sleep', 'true', timeBeforeNextScale, function(err){
-			cache.end();
-		});
-	}
+	cache.set('sleep', 'true', timeBeforeNextScale, function(err){
+		cache.end();
+	});
 }
-function checkSleep(cacheEngineType,cache, callback){
-	if(cacheEngineType == 'redis'){
-		cache.get('sleep', function(err,data){
-			if(err){throw err;}
-			else{
-				if(data == 'true'){
-					cache.quit();}
-				callback(data);
-			}
-		});
-	}
-	else{
-		cache.get('sleep', function(err,data){
-			if(err){throw err;}
-			else{
-				if(data == 'true'){
-					cache.end();}
-				callback(data);
-			}
-		});
-	} 
+function checkSleep(cache, callback){
+	cache.get('sleep', function(err,data){
+		if(err){throw err;}
+		else{
+			if(data == 'true'){
+				cache.end();}
+			callback(data);
+		}
+	}); 
 }
 exports.autoScaling = autoScaling;

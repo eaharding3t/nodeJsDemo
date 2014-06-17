@@ -13,7 +13,7 @@ function loadTest(){
 	if(loadTest == 'true'){
 		split_on_equals = split_on_and[1].split("=");
 		var databaseType = split_on_equals[1]; 
-		xmlHttp.open("GET", 'http://basicpoc.2020ar.com:1337/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
+		xmlHttp.open("GET", 'http://basicpoc.elasticbeanstalk.com:1337/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
 		xmlHttp.send();
 	}
 }
@@ -35,7 +35,7 @@ function onLoading(){
 		document.getElementById("sectionList").innerHTML ="";
 		document.getElementById("detailsList").innerHTML = "";
 	};
-	xmlHttp.open("GET", "http://basicpoc.2020ar.com:1337/onLoading?databaseType="+databaseType, true);
+	xmlHttp.open("GET", "http://basicpoc.elasticbeanstalk.com:1337/onLoading?databaseType="+databaseType, true);
 	xmlHttp.send();
 }
 //This function is called when a subject is selected from the above select.
@@ -54,7 +54,7 @@ function subjectExpand(sub){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("courseList").innerHTML = xmlHttp.responseText;
 	};
-	var url = "http://basicpoc.2020ar.com:1337/subjectExpand?subject=" +sub+"&databaseType="+databaseType;
+	var url = "http://basicpoc.elasticbeanstalk.com:1337/subjectExpand?subject=" +sub+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -74,7 +74,7 @@ function courseExpand(courseID, sub){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("sectionList").innerHTML = xmlHttp.responseText;
 	};
-	var url = "http://basicpoc.2020ar.com:1337/courseExpand?subject="+sub+"&courseID="+courseID+"&databaseType="+databaseType;
+	var url = "http://basicpoc.elasticbeanstalk.com:1337/courseExpand?subject="+sub+"&courseID="+courseID+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -93,7 +93,7 @@ function sectionExpand(sub, courseID, sec){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("detailsList").innerHTML = xmlHttp.responseText;
 	};
-	var url = "http://basicpoc.2020ar.com:1337/sectionExpand?subject="+sub+"&courseID="+courseID+"&section="+sec+"&databaseType="+databaseType;
+	var url = "http://basicpoc.elasticbeanstalk.com:1337/sectionExpand?subject="+sub+"&courseID="+courseID+"&section="+sec+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -103,7 +103,7 @@ function fileUpload(subj ,courseID, sect){var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("fileUpload").innerHTML = xmlHttp.responseText;
 	};
-	var url = "http://basicpoc.2020ar.com:1337/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
+	var url = "http://basicpoc.elasticbeanstalk.com:1337/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
@@ -122,7 +122,7 @@ function cacheIt(subj,course){ var xmlHttp = new XMLHttpRequest();
 	else{
 		cacheType = "redis";
 	}
-	var url = "http://basicpoc.2020ar.com:1337/cacheIt?key="+subj+"&value="+course+"&cacheType="+cacheType;
+	var url = "http://basicpoc.elasticbeanstalk.com:1337/cacheIt?key="+subj+"&value="+course+"&cacheType="+cacheType;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }

@@ -2,7 +2,7 @@ var AWS = require("aws-sdk");
 var memcached = require("memcached");
 function autoScaling(cpuPercent, cacheName, timeBeforeNextScale, cache)
 {
-	AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+	AWS.config.update({"accessKeyId": process.env.AWS_ACCESS_KEY_ID, "secretAccessKey": process.env.AWS_SECRET_KEY, "region": "us-east-1"});
 	var elasticache = new AWS.ElastiCache();
 	var params = {
 		CacheClusterId: cacheName

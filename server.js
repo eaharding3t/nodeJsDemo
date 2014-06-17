@@ -7,6 +7,7 @@ var AWS = require("aws-sdk");
 var redis = require("redis");
 var elasticacheAutoScaling = require("./elasticacheAutoScaling.js");
 var elasticacheAutoScalingRedis = require("./elasticacheAutoScalingRedis.js");
+var port = process.env.PORT;
 //Called when server first starts
 // Creates the listeners and calls route
 function start(handle, route)
@@ -20,7 +21,7 @@ function start(handle, route)
 		getData = url.parse(request.url, true).query;
 		route(handle ,pathname, getData, response);	
 	}
-	http.createServer(onRequest).listen(1337, os.hostname());
+	http.createServer(onRequest).listen(port, os.hostname());
 	AWS.config.update({"accessKeyId": process.env.AWS_ACCESS_KEY_ID, "secretAccessKey": process.env.AWS_SECRET_KEY, "region": "us-east-1"});
         var memConfig = new AWS.ElastiCache();
 	//If the config file says that the engine is redis, a conection to the redis node is established and every minute it checks to see if a new read replica is needed. 
@@ -28,7 +29,7 @@ function start(handle, route)
 		
         	var cache = redis.createClient(6379, "pocredis.2020ar.com");
 		setInterval(function(){
-			elasticacheAutoScalingRedis.autoScalingRedis(2000000, 'poc-eh-redis-rep', 300, cache);}, 10000);
+			elasticacheAutoScalingRedis.autoScalingRedis(2000000, 'poc-eh-redis-rep', 300, cache);}, 60000);
         }
 	//If the config file says that the engine is memcache, all of the nodes in the cluster are found and a connection is generated to all of them and every
 	//minute it checks to see if a new node is needed.

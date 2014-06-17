@@ -65,7 +65,7 @@ function checkReads(nodeNum, readAttempts, clustersData, callback){
 	}
 }
 function scaleCluster(elasticache, nodeNum, callback){
-	var nodeID = String(nodeNum);
+	var nodeID = 'a'+ String(nodeNum);
 	var params = {
 		CacheClusterId: nodeID,
 		ReplicationGroupId: 'cacheName',
@@ -82,7 +82,7 @@ function scaleCluster(elasticache, nodeNum, callback){
 	callback();
 }
 function descaleCluster(elasticache, nodeNum, callback){
-	var nodeID = String(nodeNum);
+	var nodeID = 'a'+ String(nodeNum);
 	var params = {
 		CacheClusterId: nodeID
 	};

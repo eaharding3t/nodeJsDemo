@@ -28,7 +28,7 @@ function start(handle, route)
 	if(false){
 		
         var cache = redis.createClient(6379, "pocredis.2020ar.com");
-        cache.get('sleep', fucntion(err,data){
+        cache.get('lock', function(err,data){
         	if(err){throw err;}
         	else{
         		if(data != 'true'){
@@ -43,7 +43,7 @@ function start(handle, route)
 	//If the config file says that the engine is memcache, all of the nodes in the cluster are found and a connection is generated to all of them and every
 	//minute it checks to see if a new node is needed.
 	else if(true){
-		ar params = {
+		var params = {
         	CacheClusterId: 'poc-eh-memcache',
         	ShowCacheNodeInfo: true
         };
@@ -59,7 +59,7 @@ function start(handle, route)
         		if(err){throw err;}
         		else{
         			if(data != 'true'){
-        				lockCheck.set('lock', 'true', 0,  function(){}){}
+        				lockCheck.set('lock', 'true', 0,  function(){});
         				setInterval(function(){
 							//The following set of calls (memConfig.describeCacheClusters plus callback) allows you to connect to all memcahce nodes in the cache cluster
         					var params = {
@@ -80,6 +80,7 @@ function start(handle, route)
         			}
         		}
         	});
-	}
+	});
+}
 }
 exports.start = start;

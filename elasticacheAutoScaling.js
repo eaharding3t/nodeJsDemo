@@ -64,7 +64,7 @@ function checkMemory(nodeNum, totalMemoryRemaining,  callback)
 				MetricName: 'FreeableMemory',
 				Dimensions: [
 				{Name: 'CacheClusterId',Value: 'poc-eh-memcache'},
-				{Name: 'CacheNodeId', Value: val} 
+				{Name: 'CacheNodeId', Value: nodeId} 
 				],
 				Statistics: [
 					'Average'

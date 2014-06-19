@@ -1,5 +1,5 @@
 var AWS = require("aws-sdk")
-function sqsRequest(){
+function sqsRequest(callback){
 	 AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
 	var html = "<p>";
 	var params = {

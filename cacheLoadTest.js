@@ -14,9 +14,10 @@ function cacheLoadTest(){
             nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
         }
         var cache = new memcache(nodes);
-        for(var i = 0; i<10000; i++){
+        for(var i = 0; i<50; i++){
     	   var key = "key" + String(i);
     	   var value = String(i);
+	   console.log("test");
     	   cache.set(key, value, 120, function(err){
     	   });
         }
@@ -45,3 +46,5 @@ function redisLoadTest(){
         }
     });
 }
+exports.cacheLoadTest = cacheLoadTest;
+exports.redisLoadTest = redisLoadTest;

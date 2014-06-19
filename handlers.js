@@ -7,6 +7,7 @@ var memcache = require("memcached");
 var redis = require("redis");
 var sqsUpload = require("./sqs");
 var elasticacheAutoScaling = require('./elasticacheAutoScaling');
+var cacheLoadTest= require("./cacheLoadTest");
 // Called on database selection to populate subject list
 function onLoading(getData, response)
 {
@@ -485,6 +486,17 @@ function cacheIt(getData, response)
 }
 }
 function sqs(getData, response){
+	sqsUpload.sqsRequest(function(html){
+		var headers={};
+		headers["Content-Type"] = "text/html";
+		headers["Access-Control-Allow-Origin"] = "*";
+                response.writeHead(200, headers);
+                response.write("<p>"+html+"</p>");
+                response.end();
+	});
+}
+function cacheTest(getData, response){
+	cacheLoadTest.cacheLoadTest();	
 }
 exports.fileUpload = fileUpload;
 exports.onLoading = onLoading;
@@ -494,3 +506,4 @@ exports.sectionExpand = sectionExpand;
 exports.loadTest = loadTest;
 exports.cacheIt = cacheIt;
 exports.sqs = sqs;
+exports.cacheTest = cacheTest;

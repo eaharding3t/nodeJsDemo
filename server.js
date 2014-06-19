@@ -27,29 +27,59 @@ function start(handle, route)
 	//If the config file says that the engine is redis, a conection to the redis node is established and every minute it checks to see if a new read replica is needed. 
 	if(process.env.PARAM1 == 'redis'){
 		
-        	var cache = redis.createClient(6379, "pocredis.2020ar.com");
-		setInterval(function(){
-			elasticacheAutoScalingRedis.autoScalingRedis(2000000, 'poc-eh-redis-rep', 300, cache);}, 60000);
-        }
+        var cache = redis.createClient(6379, "pocredis.2020ar.com");
+        cache.get('sleep', fucntion(err,data){
+        	if(err){throw err;}
+        	else{
+        		if(data != 'true'){
+        			cache.set('lock', 'true', function(){});
+					setInterval(function(){
+						elasticacheAutoScalingRedis.autoScalingRedis(100, 'poc-eh-redis-rep', 300, cache, 60000);
+        	         });
+        	   }
+            }
+        });
+    }
 	//If the config file says that the engine is memcache, all of the nodes in the cluster are found and a connection is generated to all of them and every
 	//minute it checks to see if a new node is needed.
 	else if(process.env.PARAM1 == 'memcache'){
-		setInterval(function(){
-        		var params = {
-        			CacheClusterId: 'poc-eh-memcache',
-        			ShowCacheNodeInfo: true
-        		};
-        		var nodes = [];
-        		memConfig.describeCacheClusters(params, function(err,data){
-        			if(err){throw err;}
-                		for(var i = 0; i<data['CacheClusters'][0]['CacheNodes'].length; i++)
-                		{
-                			nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
-                		}
-        			var cache = new memcache(nodes);
-				elasticacheAutoScaling.autoScaling(2000000, 'poc-eh-memcache', 300, cache);
-			});
-		}, 60000);
+		ar params = {
+        	CacheClusterId: 'poc-eh-memcache',
+        	ShowCacheNodeInfo: true
+        };
+        var nodes = [];
+        memConfig.describeCacheClusters(params, function(err,data){
+        	if(err){throw err;}
+                for(var i = 0; i<data['CacheClusters'][0]['CacheNodes'].length; i++)
+                {
+                	nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
+                }
+        	var lockCheck = new memcache(nodes);
+        	lockCheck.get('lock', function(err,data){
+        		if(err){throw err;}
+        		else{
+        			if(data != 'true'){
+        				lockCheck.set('lock', 'true', 0,  function(){}){}
+        				setInterval(function(){
+							//The following set of calls (memConfig.describeCacheClusters plus callback) allows you to connect to all memcahce nodes in the cache cluster
+        					var params = {
+        						CacheClusterId: 'poc-eh-memcache',
+        						ShowCacheNodeInfo: true
+        					};
+        					var nodes = [];
+        					memConfig.describeCacheClusters(params, function(err,data){
+        						if(err){throw err;}
+                				for(var i = 0; i<data['CacheClusters'][0]['CacheNodes'].length; i++)
+                				{
+                					nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
+                				}
+        						var cache = new memcache(nodes);
+								elasticacheAutoScaling.autoScaling(2000000, 'poc-eh-memcache', 300, cache);
+							});
+						}, 60000);
+        			}
+        		}
+        	});
 	}
 }
 exports.start = start;

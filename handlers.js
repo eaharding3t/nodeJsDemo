@@ -5,6 +5,7 @@ var AWS = require("aws-sdk");
 var fs = require("fs");
 var memcache = require("memcached");
 var redis = require("redis");
+var sqsUpload = require("./sqs");
 var elasticacheAutoScaling = require('./elasticacheAutoScaling');
 // Called on database selection to populate subject list
 function onLoading(getData, response)
@@ -428,13 +429,16 @@ function cacheIt(getData, response)
 			ShowCacheNodeInfo: true
 		};
 		var nodes = [];
+		//Query elasticache for a list of all the nodes in our current cache cluster
 		memConfig.describeCacheClusters(params, function(err,data){
 			if(err){throw err;}
 			for(var i = 0; i<data['CacheClusters'][0]['CacheNodes'].length; i++)
 			{
 				nodes[i] = String(data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Address'] +':'+data['CacheClusters'][0]['CacheNodes'][i]['Endpoint']['Port']);
 			}
+		//Use the list of cache nodes to initialize memcached connection
 		var cache = new memcache(nodes);
+		//Set a variable in memcached (that expires in two minutes, then retrieve it and send it back to the html page
 		cache.set(getData['key'], getData['value'], 120,  function(err){
 			if(err){throw err;}
 			else{
@@ -456,7 +460,9 @@ function cacheIt(getData, response)
 	}
 	else if(getData['cacheType'] == 'redis')
 	{
+	//Make a connection to the redis read/write primary
 	var cache = redis.createClient(6379,"pocredis.2020ar.com");
+	//Set a variable in redis, set it to expire in two minutes and send this value back to the html page
 	cache.set(getData['key'], getData['value'], function(err){
 		if(err){throw err;}
 		else{
@@ -478,6 +484,9 @@ function cacheIt(getData, response)
 	});
 }
 }
+function sqs(getData, response){
+	sqsUpload.sqsRequest
+}
 exports.fileUpload = fileUpload;
 exports.onLoading = onLoading;
 exports.subjectExpand = subjectExpand;
@@ -485,3 +494,4 @@ exports.courseExpand = courseExpand;
 exports.sectionExpand = sectionExpand;
 exports.loadTest = loadTest;
 exports.cacheIt = cacheIt;
+exports.sqs = sqs;

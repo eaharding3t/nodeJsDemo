@@ -36,7 +36,7 @@ function onLoading(){
 		document.getElementById("sectionList").innerHTML ="";
 		document.getElementById("detailsList").innerHTML = "";
 	};
-	var url = process.env.APP_URL + '/onLoading?databaseType=' + databaseType;
+	var url = System.getProperty(APP_URL) + '/onLoading?databaseType=' + databaseType;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
@@ -56,7 +56,7 @@ function subjectExpand(sub){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("courseList").innerHTML = xmlHttp.responseText;
 	};
-	var url = process.env.APP_URL + '/subjectExpand?subject=' + sub + '&databaseType=' + databaseType;
+	var url = System.getProperty(APP_URL) + '/subjectExpand?subject=' + sub + '&databaseType=' + databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }

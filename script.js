@@ -1,5 +1,6 @@
 //This function is called on page-load as well as when the value of the loadtest check box is changed.
 //It kicks a special event on the server that performs an expensive query with a random length (to prevent caching).
+var appURL = process.env.APP_URL;
 function loadTest(){
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
@@ -13,7 +14,7 @@ function loadTest(){
 	if(loadTest == 'true'){
 		split_on_equals = split_on_and[1].split("=");
 		var databaseType = split_on_equals[1]; 
-		xmlHttp.open("GET", process.env.APP_URL + '/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
+		xmlHttp.open("GET", String(appURL) + '/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
 		xmlHttp.send();
 	}
 }
@@ -35,7 +36,7 @@ function onLoading(){
 		document.getElementById("sectionList").innerHTML ="";
 		document.getElementById("detailsList").innerHTML = "";
 	};
-	xmlHttp.open("GET", process.env.APP_URL + "/onLoading?databaseType="+databaseType, true);
+	xmlHttp.open("GET", String(appURL) + "/onLoading?databaseType="+databaseType, true);
 	xmlHttp.send();
 }
 //This function is called when a subject is selected from the above select.
@@ -54,7 +55,7 @@ function subjectExpand(sub){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("courseList").innerHTML = xmlHttp.responseText;
 	};
-	var url = process.env.APP_URL + "/subjectExpand?subject=" +sub+"&databaseType="+databaseType;
+	var url = String(appURL) + "/subjectExpand?subject=" +sub+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -74,7 +75,7 @@ function courseExpand(courseID, sub){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("sectionList").innerHTML = xmlHttp.responseText;
 	};
-	var url = process.env.APP_URL + "/courseExpand?subject="+sub+"&courseID="+courseID+"&databaseType="+databaseType;
+	var url = String(appURL) + "/courseExpand?subject="+sub+"&courseID="+courseID+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -93,7 +94,7 @@ function sectionExpand(sub, courseID, sec){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("detailsList").innerHTML = xmlHttp.responseText;
 	};
-	var url = process.env.APP_URL + "/sectionExpand?subject="+sub+"&courseID="+courseID+"&section="+sec+"&databaseType="+databaseType;
+	var url = String(appURL) + "/sectionExpand?subject="+sub+"&courseID="+courseID+"&section="+sec+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -103,7 +104,7 @@ function fileUpload(subj ,courseID, sect){var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("fileUpload").innerHTML = xmlHttp.responseText;
 	};
-	var url = process.env.APP_URL + "/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
+	var url = String(appURL) + "/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
@@ -122,7 +123,7 @@ function cacheIt(subj,course){ var xmlHttp = new XMLHttpRequest();
 	else{
 		cacheType = "redis";
 	}
-	var url = process.env.APP_URL + "/cacheIt?key="+subj+"&value="+course+"&cacheType="+cacheType;
+	var url = String(appURL) + "/cacheIt?key="+subj+"&value="+course+"&cacheType="+cacheType;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
@@ -132,7 +133,7 @@ function sqs(subj, course){ var xmlHttp = new XMLHttpRequest();
 			document.getElementById("sqs").innerHTML = xmlHttp.responseText;
 		}
 	};
-	var url = process.env.APP_URL + "/sqs?message=" + subj + ":"+course;
+	var url = String(appURL) + "/sqs?message=" + subj + ":"+course;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }

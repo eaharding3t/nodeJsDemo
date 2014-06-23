@@ -22,7 +22,7 @@ function start(handle, route)
 		route(handle ,pathname, getData, response);	
 	}
 	http.createServer(onRequest).listen(port, os.hostname());
-	 AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+	AWS.config.update({"accessKeyId": process.env.AWS_ACCESS_KEY_ID, "secretAccessKey": process.env.AWS_SECRET_KEY, "region": "us-east-1"});
         var memConfig = new AWS.ElastiCache();
 	//If the config file says that the engine is redis, a conection to the redis node is established and every minute it checks to see if a new read replica is needed. 
 	if(false){

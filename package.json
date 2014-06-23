@@ -11,6 +11,6 @@
     "aws-sdk": "*",
     "newrelic": "*",
     "memcached": "*",
-    "redis": "* `"
+    "redis": "*"
   }
 }

@@ -173,7 +173,7 @@ function sectionExpand(getData, response)
 	}
 	else if (getData['databaseType'] == 2) {
 		try {
-			 AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+			AWS.config.update({"accessKeyId": process.env.AWS_ACCESS_KEY_ID, "secretAccessKey": process.env.AWS_SECRET_KEY, "region": "us-east-1"});
 			var db = new AWS.DynamoDB();
 			var table ="";
 			var params = {
@@ -278,7 +278,7 @@ function sectionExpand(getData, response)
 //nested in order to run synchronously
 function fileUpload(getData, response) {
 	try {
-		 AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+		AWS.config.update({"accessKeyId": process.env.AWS_ACCESS_KEY_ID, "secretAccessKey": process.env.AWS_SECRET_KEY, "region": "us-east-1"});
 		var s3 = new AWS.S3();
 		var file = "./courseDetails.txt";
 		var details = "subject=" + getData['subject'] + " courseID="+getData['courseID']+" section="+getData['section'];
@@ -375,7 +375,7 @@ function loadTest(getData, response) {
 				break;
 			case '2':
 				try {
-					 AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+					AWS.config.update({"accessKeyId": process.env.AWS_ACCESS_KEY_ID, "secretAccessKey": process.env.AWS_SECRET_KEY, "region": "us-east-1"});
 					var db = new AWS.DynamoDB();
 					var rand = Math.round(Math.random()*10000);
 					var params = {
@@ -429,7 +429,7 @@ function cacheIt(getData, response)
 {
 	if(getData['cacheType'] == 'memcache')
 	{
-		 AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
+		AWS.config.update({"accessKeyId": process.env.AWS_ACCESS_KEY_ID, "secretAccessKey": process.env.AWS_SECRET_KEY, "region": "us-east-1"});
 		var memConfig = new AWS.ElastiCache();
 		var params = {
 			CacheClusterId: 'poc-eh-memcache',

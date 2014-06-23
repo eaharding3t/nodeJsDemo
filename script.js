@@ -13,7 +13,7 @@ function loadTest(){
 	if(loadTest == 'true'){
 		split_on_equals = split_on_and[1].split("=");
 		var databaseType = split_on_equals[1]; 
-		xmlHttp.open("GET", 'https://basicpoc.2020ar.com:8081/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
+		xmlHttp.open("GET", 'https://basicpoc.2020ar.com:8081/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true); //process.env.APP_URL
 		xmlHttp.send();
 	}
 }

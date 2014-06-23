@@ -36,6 +36,7 @@ function onLoading(){
 		document.getElementById("sectionList").innerHTML ="";
 		document.getElementById("detailsList").innerHTML = "";
 	};
+	console.log(appURL);
 	xmlHttp.open("GET", String(appURL) + "/onLoading?databaseType="+databaseType, true);
 	xmlHttp.send();
 }

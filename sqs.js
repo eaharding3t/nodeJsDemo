@@ -8,7 +8,9 @@ function sqsRequest(callback){
 	};
 	var sqs = new AWS.SQS();
 	sqs.receiveMessage(params, function(err, data){
-		html += data['Messages'][0]['Body']['Subject'] + ' : ' + data['Messages'][0]['Body']['Message'];
+		//html += data['Messages'][0]['Body']['Subject'] + ' : ' + data['Messages'][0]['Body']['Message'];
+		html += data['Messages'][0]['Body'];
+		console.log(typeof html);
 		callback(html);
 	});
 }

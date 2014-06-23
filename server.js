@@ -7,7 +7,7 @@ var AWS = require("aws-sdk");
 var redis = require("redis");
 var elasticacheAutoScaling = require("./elasticacheAutoScaling.js");
 var elasticacheAutoScalingRedis = require("./elasticacheAutoScalingRedis.js");
-//var port = process.env.PORT;
+var port = process.env.PORT;
 //Called when server first starts
 // Creates the listeners and calls route
 function start(handle, route)
@@ -21,7 +21,7 @@ function start(handle, route)
 		getData = url.parse(request.url, true).query;
 		route(handle ,pathname, getData, response);	
 	}
-	http.createServer(onRequest).listen(1337, os.hostname());
+	http.createServer(onRequest).listen(port, os.hostname());
 	 AWS.config.loadFromPath('/var/www/html/repo/nodeJsDemo/config.json');
         var memConfig = new AWS.ElastiCache();
 	//If the config file says that the engine is redis, a conection to the redis node is established and every minute it checks to see if a new read replica is needed. 

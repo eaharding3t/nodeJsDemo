@@ -119,6 +119,7 @@ function sectionExpand(getData, response)
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 		temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
 		table+='<br/><div id = "cacheIt"><button onclick = "cacheIt('+temp+')">Cache your results</button></div>';
+		table+='<br/><div id = "sqsButton"><button onclick = "sqs('+temp+')">Get message from sns</button></div>';
 	    	response.writeHead(200, headers);
 	 		response.write(table);
 	 		response.end();
@@ -162,6 +163,9 @@ function sectionExpand(getData, response)
     		headers["Access-Control-Allow-Origin"] = "*";
     		var temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value, document.getElementById('sectionL').value";
     		table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
+    		temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
+			table+='<br/><div id = "cacheIt"><button onclick = "cacheIt('+temp+')">Cache your results</button></div>';
+    		table+='<br/><div id = "sqsButton"><button onclick = "sqs('+temp+')">Get message from sns</button></div>';
 	    	response.writeHead(200, headers);
 	 		response.write(table);
 	 		response.end();
@@ -219,6 +223,7 @@ function sectionExpand(getData, response)
     					table +='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 					temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
 					table+='<br/><div id = "cacheIt"><button onclick = "cacheIt('+temp+')">Cache your results</button></div>';
+					table+='<br/><div id = "sqsButton"><button onclick = "sqs('+temp+')">Get message from sns</button></div>';
 					response.writeHead(200, headers);
 					response.write(table);
 					response.end();
@@ -261,6 +266,7 @@ function sectionExpand(getData, response)
     			table+='<br><div id = "fileUpload"><button onclick = "fileUpload('+temp+')">Upload a file</button></div>';
 			temp = "document.getElementById('subjectL').value, document.getElementById('courseL').value";
 			table+='<br/><div id = "cacheIt"><button onclick = "cacheIt('+temp+')">Cache your results</button></div>';
+			table+='<br/><div id = "sqsButton"><button onclick = "sqs('+temp+')">Get message from sns</button></div>';
 			response.writeHead(200, headers);
 			response.write(table);
 			response.end();

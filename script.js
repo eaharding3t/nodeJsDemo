@@ -126,6 +126,16 @@ function cacheIt(subj,course){ var xmlHttp = new XMLHttpRequest();
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
+function sqs(subj, course){ var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function(){
+		if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
+			document.getElementById("sqs").innerHTML = xmlHttp.responseText;
+		}
+	};
+	var url = "http://basicpoc.elasticbeanstalk.com:8081/sqs?message=" + subj + ":"+course;
+	xmlHttp.open("GET", url, true);
+	xmlHttp.send();
+}
 //Google Analytics
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

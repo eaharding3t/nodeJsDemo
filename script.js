@@ -1,6 +1,5 @@
 //This function is called on page-load as well as when the value of the loadtest check box is changed.
 //It kicks a special event on the server that performs an expensive query with a random length (to prevent caching).
-var appURL = process.env.APP_URL;
 function loadTest(){
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
@@ -37,7 +36,7 @@ function onLoading(){
 		document.getElementById("detailsList").innerHTML = "";
 	};
 	console.log(appURL);
-	xmlHttp.open("GET", String(appURL) + "/onLoading?databaseType="+databaseType, true);
+	xmlHttp.open("GET", String(process.env.APP) + "/onLoading?databaseType="+databaseType, true);
 	xmlHttp.send();
 }
 //This function is called when a subject is selected from the above select.

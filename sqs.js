@@ -4,7 +4,7 @@ function sqsRequest(callback){
 	var html = "";
 	var temp = "";
 	var params = {
-		QueueUrl: SQS_URL
+		QueueUrl: process.env.SQS_URL
 	};
 	var sqs = new AWS.SQS();
 	sqs.receiveMessage(params, function(err, data){

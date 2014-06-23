@@ -35,7 +35,6 @@ function onLoading(){
 		document.getElementById("sectionList").innerHTML ="";
 		document.getElementById("detailsList").innerHTML = "";
 	};
-	console.log(process.env.APP_URL);
 	xmlHttp.open("GET", "https://basicpoc.2020ar.com:8081/onLoading?databaseType="+databaseType, true);
 	xmlHttp.send();
 }

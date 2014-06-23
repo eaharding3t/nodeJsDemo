@@ -4,7 +4,7 @@ function sqsRequest(callback){
 	var html = "";
 	var temp = "";
 	var params = {
-		QueueUrl: process.env.SQS_URL
+		QueueUrl: 'https://sqs.us-east-1.amazonaws.com/121717378798/poc-eh-queue'
 	};
 	var sqs = new AWS.SQS();
 	sqs.receiveMessage(params, function(err, data){

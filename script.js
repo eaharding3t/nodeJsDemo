@@ -13,7 +13,7 @@ function loadTest(){
 	if(loadTest == 'true'){
 		split_on_equals = split_on_and[1].split("=");
 		var databaseType = split_on_equals[1]; 
-		xmlHttp.open("GET", String(process.env.APP_URL) + '/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
+		xmlHttp.open("GET", 'https://basicpoc.2020ar.com:8081/loadTest?loadTest='+loadTest+'&databaseType='+databaseType, true);
 		xmlHttp.send();
 	}
 }
@@ -36,7 +36,7 @@ function onLoading(){
 		document.getElementById("detailsList").innerHTML = "";
 	};
 	console.log(process.env.APP_URL);
-	xmlHttp.open("GET", String(process.env.APP_URL) + "/onLoading?databaseType="+databaseType, true);
+	xmlHttp.open("GET", "https://basicpoc.2020ar.com:8081/onLoading?databaseType="+databaseType, true);
 	xmlHttp.send();
 }
 //This function is called when a subject is selected from the above select.
@@ -55,7 +55,7 @@ function subjectExpand(sub){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("courseList").innerHTML = xmlHttp.responseText;
 	};
-	var url = String(process.env.APP_URL) + "/subjectExpand?subject=" +sub+"&databaseType="+databaseType;
+	var url = "https://basicpoc.2020ar.com:8081/subjectExpand?subject=" +sub+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -75,7 +75,7 @@ function courseExpand(courseID, sub){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("sectionList").innerHTML = xmlHttp.responseText;
 	};
-	var url = String(process.env.APP_URL) + "/courseExpand?subject="+sub+"&courseID="+courseID+"&databaseType="+databaseType;
+	var url = "https://basicpoc.2020ar.com:8081/courseExpand?subject="+sub+"&courseID="+courseID+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -94,7 +94,7 @@ function sectionExpand(sub, courseID, sec){
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("detailsList").innerHTML = xmlHttp.responseText;
 	};
-	var url = String(process.env.APP_URL) + "/sectionExpand?subject="+sub+"&courseID="+courseID+"&section="+sec+"&databaseType="+databaseType;
+	var url = "https://basicpoc.2020ar.com:8081/sectionExpand?subject="+sub+"&courseID="+courseID+"&section="+sec+"&databaseType="+databaseType;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send();
 }
@@ -104,7 +104,7 @@ function fileUpload(subj ,courseID, sect){var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
 		document.getElementById("fileUpload").innerHTML = xmlHttp.responseText;
 	};
-	var url = String(process.env.APP_URL) + "/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
+	var url = "https://basicpoc.2020ar.com:8081/fileUpload?subject="+subj+"&courseID="+courseID+"&section="+sect;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
@@ -123,7 +123,7 @@ function cacheIt(subj,course){ var xmlHttp = new XMLHttpRequest();
 	else{
 		cacheType = "redis";
 	}
-	var url = String(process.env.APP_URL) + "/cacheIt?key="+subj+"&value="+course+"&cacheType="+cacheType;
+	var url = "https://basicpoc.2020ar.com:8081/cacheIt?key="+subj+"&value="+course+"&cacheType="+cacheType;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }
@@ -133,7 +133,7 @@ function sqs(subj, course){ var xmlHttp = new XMLHttpRequest();
 			document.getElementById("sqs").innerHTML = xmlHttp.responseText;
 		}
 	};
-	var url = String(process.env.APP_URL) + "/sqs?message=" + subj + ":"+course;
+	var url = "https://basicpoc.2020ar.com:8081/sqs?message=" + subj + ":"+course;
 	xmlHttp.open("GET", url, true);
 	xmlHttp.send();
 }

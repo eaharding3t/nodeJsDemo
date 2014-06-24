@@ -12,7 +12,7 @@ exports.config = {
   /**
    * Your New Relic license key.
    */
-  license_key : process.env.PARAM2,
+  license_key : String(process.env.NEW_RELIC_LICENSE_KEY),
   logging : {
     /**
      * Level at which to log. 'trace' is most useful to New Relic when diagnosing
